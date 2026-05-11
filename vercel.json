@@ -1,4 +1,4 @@
 {
   "outputDirectory": "public",
-  "rewrites": [{ "source": "/(.*)", "dest": "/index.html" }]
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
