@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorprendente Tour · Propuesta de Branding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --negro:    #0F1A10;
+  --selva:    #1B3A2A;
+  --jungla:   #2D6A4F;
+  --cascada:  #4CAF7A;
+  --tierra:   #C4703A;
+  --arena:    #E8B87A;
+  --crema:    #FAF8F2;
+  --hueso:    #F0EBE0;
+  --borde:    #E0D9CE;
+  --tinta:    #2D1B0E;
+  --tinta2:   #4a4038;
+  --tinta3:   #8a7e72;
+  --verde-p:  #F4FAF5;
+  --tierra-p: #FEF8F0;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--crema);
+  color: var(--tinta);
+  min-height: 100vh;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--negro);
+  display: flex; align-items: center; gap: 0;
+  overflow-x: auto; padding: 0 24px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  -webkit-overflow-scrolling: touch;
+}
+.topbar-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px; font-weight: 700;
+  color: var(--arena); white-space: nowrap;
+  padding: 14px 20px 14px 0;
+  border-right: 1px solid rgba(255,255,255,.1);
+  margin-right: 16px; flex-shrink: 0;
+}
+.topbar-brand span { color: rgba(255,255,255,.4); font-weight: 400; }
+.nav-btn {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: .06em; text-transform: uppercase;
+  padding: 16px 14px; border: none; background: transparent;
+  color: rgba(255,255,255,.45); cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap; flex-shrink: 0;
+  transition: all .15s;
+}
+.nav-btn:hover { color: rgba(255,255,255,.8); }
+.nav-btn.active { color: var(--arena); border-bottom-color: var(--tierra); }
+
+/* ── VIEWS ── */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ── HERO BANDS ── */
+.hero {
+  background: var(--negro);
+  padding: 48px 40px;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,.025) 39px, rgba(255,255,255,.025) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,.015) 39px, rgba(255,255,255,.015) 40px);
+}
+.hero > * { position: relative; }
+.hero-eyebrow {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: var(--cascada); margin-bottom: 12px;
+}
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 700; color: #fff;
+  line-height: 1.05; letter-spacing: -.5px;
+}
+.hero-title em { color: var(--arena); font-style: italic; }
+.hero-sub {
+  font-size: 14px; color: #6B8F74;
+  margin-top: 14px; line-height: 1.7;
+  max-width: 580px;
+}
+
+/* ── LAYOUT ── */
+.page-body { max-width: 1100px; margin: 0 auto; padding: 40px 32px; }
+.section { margin-bottom: 48px; }
+.section-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: var(--tierra); margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--borde);
+}
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 600;
+  color: var(--tinta); margin-bottom: 16px; line-height: 1.2;
+}
+
+/* ── CARDS ── */
+.card {
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid var(--borde);
+  padding: 22px 24px;
+}
+.card-dark {
+  background: var(--negro);
+  border-radius: 14px; padding: 22px 24px;
+}
+.card-terra {
+  background: var(--tierra);
+  border-radius: 14px; padding: 22px 24px;
+}
+.card-selva {
+  background: var(--selva);
+  border-radius: 14px; padding: 22px 24px;
+}
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.grid-auto { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+.flex-row { display: flex; gap: 14px; flex-wrap: wrap; }
+.stack { display: flex; flex-direction: column; gap: 12px; }
+
+/* ── DIAGNOSTIC ── */
+.diag-list { list-style: none; }
+.diag-list li {
+  font-size: 13px; line-height: 1.7; color: var(--tinta2);
+  padding: 5px 0; border-bottom: 1px solid var(--borde);
+  display: flex; gap: 8px; align-items: flex-start;
+}
+.diag-list li:last-child { border-bottom: none; }
+.diag-list li::before {
+  content: '—'; font-weight: 700; flex-shrink: 0; margin-top: 1px;
+}
+.list-pos li::before { color: var(--jungla); }
+.list-neg li::before { color: var(--tierra); }
+.list-opp li::before { color: var(--cascada); }
+
+.badge {
+  display: inline-flex; align-items: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  padding: 4px 12px; border-radius: 20px;
+}
+.badge-green { background: var(--verde-p); color: var(--jungla); }
+.badge-terra { background: var(--tierra-p); color: var(--tierra); }
+.badge-dark  { background: rgba(255,255,255,.1); color: var(--cascada); }
+.badge-amber { background: #FEF3E6; color: #92400E; }
+
+/* ── USP BOX ── */
+.usp-box { background: var(--negro); border-radius: 16px; padding: 28px 30px; }
+.usp-label { font-family: 'Syne', sans-serif; font-size: 9px; letter-spacing: .2em; color: var(--cascada); text-transform: uppercase; margin-bottom: 10px; }
+.usp-text { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: #fff; line-height: 1.35; font-style: italic; }
+.usp-explain { font-size: 12px; color: #6B8F74; margin-top: 10px; line-height: 1.7; }
+
+.big-idea { background: var(--tierra); border-radius: 16px; padding: 28px 30px; }
+.bi-label { font-family: 'Syne', sans-serif; font-size: 9px; letter-spacing: .2em; color: rgba(255,255,255,.55); text-transform: uppercase; margin-bottom: 10px; }
+.bi-text { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 700; color: #fff; line-height: 1.1; }
+.bi-sub { font-size: 12px; color: rgba(255,255,255,.7); margin-top: 10px; line-height: 1.65; }
+
+/* ── ROUTES ── */
+.route { border-radius: 14px; padding: 24px 26px; border: 1px solid var(--borde); }
+.route-num { font-family: 'Syne', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--tinta3); margin-bottom: 6px; }
+.route-name { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 700; margin-bottom: 6px; line-height: 1.1; }
+.route-tagline { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 12px; }
+.route-body { font-size: 13px; line-height: 1.7; color: var(--tinta2); margin-bottom: 14px; }
+.route-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.route-detail-item { font-size: 11px; line-height: 1.5; }
+.route-detail-item strong { display: block; font-family: 'Syne', sans-serif; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 3px; }
+.pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.pill { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 600; padding: 4px 12px; border-radius: 20px; }
+
+.route.r1 { background: #F4FAF5; }
+.route.r1 .route-name { color: var(--selva); }
+.route.r1 .route-tagline { color: var(--jungla); }
+.route.r2 { background: var(--negro); }
+.route.r2 .route-num { color: var(--cascada); }
+.route.r2 .route-name { color: var(--arena); }
+.route.r2 .route-tagline { color: rgba(255,255,255,.5); }
+.route.r2 .route-body { color: #93B9A0; }
+.route.r2 .route-detail-item { color: #93B9A0; }
+.route.r2 .route-detail-item strong { color: var(--cascada); }
+.route.r3 { background: var(--tierra-p); }
+.route.r3 .route-name { color: #92400E; }
+.route.r3 .route-tagline { color: var(--tierra); }
+
+/* ── NAMING ── */
+.name-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+.name-card { border-radius: 10px; padding: 14px 16px; background: #fff; border: 1px solid var(--borde); }
+.name-card.winner { background: var(--negro); border-color: var(--jungla); border-width: 2px; }
+.name-word { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 700; color: var(--tinta); margin-bottom: 4px; }
+.name-card.winner .name-word { color: var(--arena); }
+.name-why { font-size: 11px; color: var(--tinta3); line-height: 1.5; }
+.name-card.winner .name-why { color: #6B8F74; }
+.name-badge { display: inline-block; margin-bottom: 6px; }
+
+/* ── PALETTE ── */
+.palette { display: flex; gap: 10px; flex-wrap: wrap; }
+.swatch { flex: 1; min-width: 90px; max-width: 140px; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,.1); }
+.swatch-block { height: 90px; }
+.swatch-info { background: #fff; padding: 10px 12px; border-top: none; }
+.sw-name { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; color: var(--tinta); }
+.sw-hex { font-size: 11px; color: var(--tinta3); margin-top: 2px; font-family: 'Inter', monospace; }
+.sw-role { font-size: 10px; color: var(--tierra); margin-top: 2px; font-weight: 500; }
+
+/* ── TYPOGRAPHY ── */
+.type-sample-display { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 700; color: var(--negro); line-height: 1.1; margin-bottom: 6px; }
+.type-sample-display em { font-style: italic; color: var(--tierra); }
+.type-sample-caps { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--jungla); margin-bottom: 4px; }
+.type-sample-body { font-family: 'Inter', sans-serif; font-size: 13px; color: var(--tinta2); line-height: 1.7; }
+.type-meta { font-family: 'Syne', sans-serif; font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: var(--tinta3); margin-top: 8px; }
+.type-use { font-size: 11px; color: var(--tierra); margin-top: 3px; }
+
+/* ── PHOTO DIRECTION ── */
+.photo-card { border-radius: 12px; padding: 16px 18px; background: #fff; border: 1px solid var(--borde); }
+.photo-kw { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px; }
+.photo-kw span { font-size: 10px; background: var(--hueso); color: var(--tinta2); padding: 3px 9px; border-radius: 20px; font-weight: 500; }
+.photo-title { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; color: var(--tinta); margin-bottom: 5px; letter-spacing: .04em; }
+.photo-desc { font-size: 12px; color: var(--tinta3); line-height: 1.55; }
+
+/* ── COPY ── */
+.copy-block { border-radius: 12px; padding: 20px 22px; margin-bottom: 12px; }
+.copy-ctx { font-family: 'Syne', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 10px; }
+.copy-text { font-size: 14px; line-height: 1.7; }
+.copy-block.dark { background: var(--negro); }
+.copy-block.dark .copy-ctx { color: var(--cascada); }
+.copy-block.dark .copy-text { color: #D4C9BC; }
+.copy-block.dark .copy-text em { color: var(--arena); font-style: normal; font-weight: 500; }
+.copy-block.terra { background: var(--tierra); }
+.copy-block.terra .copy-ctx { color: rgba(255,255,255,.6); }
+.copy-block.terra .copy-text { color: #fff; font-family: 'Cormorant Garamond', serif; font-size: 19px; font-weight: 600; font-style: italic; line-height: 1.4; }
+.copy-block.light { background: #fff; border: 1px solid var(--borde); }
+.copy-block.light .copy-ctx { color: var(--tierra); }
+.copy-block.light .copy-text { color: var(--tinta); }
+.copy-block.selva { background: var(--selva); }
+.copy-block.selva .copy-ctx { color: var(--cascada); }
+.copy-block.selva .copy-text { color: #C2DEC9; }
+
+/* ── JOURNEY ── */
+.journey-step {
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 16px 18px; border-radius: 12px; background: #fff; border: 1px solid var(--borde);
+}
+.j-dot {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 800;
+}
+.j-dot.antes  { background: var(--tierra-p); color: var(--tierra); }
+.j-dot.durante { background: var(--negro); color: var(--cascada); }
+.j-dot.despues { background: var(--verde-p); color: var(--jungla); }
+.j-phase { font-family: 'Syne', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--tinta3); margin-bottom: 3px; }
+.j-title { font-size: 13px; font-weight: 500; color: var(--tinta); margin-bottom: 4px; }
+.j-detail { font-size: 12px; color: var(--tinta3); line-height: 1.55; }
+
+/* ── QUICK WINS ── */
+.win-card {
+  padding: 14px 16px; background: #fff;
+  border-left: 3px solid var(--tierra); border-top: 1px solid var(--borde);
+  border-right: 1px solid var(--borde); border-bottom: 1px solid var(--borde);
+  border-radius: 0 10px 10px 0;
+}
+.win-week { font-family: 'Syne', sans-serif; font-size: 9px; font-weight: 700; color: var(--tierra); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 4px; }
+.win-action { font-size: 13px; font-weight: 500; color: var(--tinta); margin-bottom: 3px; }
+.win-impact { font-size: 11px; color: var(--tinta3); line-height: 1.5; }
+
+/* ── WEB MOCKUP ── */
+.web-mock {
+  background: #fff; border-radius: 16px;
+  border: 1px solid var(--borde); overflow: hidden;
+}
+.mock-bar { background: #F5F3EE; padding: 10px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--borde); }
+.mock-dot { width: 10px; height: 10px; border-radius: 50%; }
+.mock-url { flex: 1; background: #fff; border-radius: 5px; padding: 5px 10px; font-size: 11px; color: var(--tinta3); border: 1px solid var(--borde); }
+.mock-hero { background: var(--negro); padding: 36px 28px; }
+.mock-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+.mock-logo { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 700; color: var(--arena); }
+.mock-nav-items { display: flex; gap: 16px; }
+.mock-nav-item { font-family: 'Syne', sans-serif; font-size: 10px; color: rgba(255,255,255,.5); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.mock-h1 { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 700; color: #fff; line-height: 1.1; margin-bottom: 12px; }
+.mock-h1 em { color: var(--arena); font-style: italic; }
+.mock-p { font-size: 13px; color: #6B8F74; line-height: 1.65; margin-bottom: 20px; max-width: 400px; }
+.mock-btns { display: flex; gap: 10px; }
+.mock-btn-p { background: var(--tierra); color: #fff; padding: 10px 22px; border-radius: 8px; font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.mock-btn-s { background: transparent; color: rgba(255,255,255,.6); padding: 10px 22px; border-radius: 8px; font-family: 'Syne', sans-serif; font-size: 11px; border: 1px solid rgba(255,255,255,.2); font-weight: 600; }
+.mock-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding: 24px 28px; background: var(--crema); }
+.mock-card { background: #fff; border-radius: 10px; overflow: hidden; border: 1px solid var(--borde); }
+.mock-card-img { height: 80px; }
+.mock-card-body { padding: 10px 12px; }
+.mock-card-name { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; color: var(--tinta); letter-spacing: .04em; margin-bottom: 3px; }
+.mock-card-desc { font-size: 10px; color: var(--tinta3); line-height: 1.4; margin-bottom: 6px; }
+.mock-card-price { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 700; color: var(--selva); }
+
+/* ── FOOTER ── */
+.page-footer { background: var(--negro); padding: 32px 40px; }
+.footer-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: gap; gap: 16px; }
+.footer-brand { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 700; color: var(--arena); }
+.footer-note { font-size: 11px; color: #3a5a44; }
+.footer-btns { display: flex; gap: 10px; }
+.fbtn { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 9px 20px; border-radius: 8px; border: none; cursor: pointer; transition: all .15s; }
+.fbtn-g { background: var(--jungla); color: #fff; }
+.fbtn-g:hover { background: #3a8a67; }
+.fbtn-t { background: var(--tierra); color: #fff; }
+.fbtn-t:hover { background: #d4834e; }
+
+@media (max-width: 700px) {
+  .page-body { padding: 24px 18px; }
+  .hero { padding: 32px 20px; }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .mock-cards { grid-template-columns: 1fr 1fr; }
+  .footer-inner { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<nav class="topbar">
+  <div class="topbar-brand">Sorprendente Tour <span>· Branding</span></div>
+  <button class="nav-btn active" onclick="show('diagnostico',this)">1. Diagnóstico</button>
+  <button class="nav-btn" onclick="show('posicionamiento',this)">2. Posicionamiento</button>
+  <button class="nav-btn" onclick="show('rutas',this)">3. Rutas creativas</button>
+  <button class="nav-btn" onclick="show('naming',this)">4. Naming</button>
+  <button class="nav-btn" onclick="show('visual',this)">5. Identidad visual</button>
+  <button class="nav-btn" onclick="show('voz',this)">6. Voz y copy</button>
+  <button class="nav-btn" onclick="show('experiencia',this)">7. Experiencia</button>
+  <button class="nav-btn" onclick="show('wins',this)">8. Quick wins</button>
+  <button class="nav-btn" onclick="show('web',this)">9. Web mockup</button>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════
+     1. DIAGNÓSTICO
+══════════════════════════════════════════════════════════ -->
+<div class="view active" id="v-diagnostico">
+  <div class="hero">
+    <div class="hero-eyebrow">Brand Strategy · Sorprendente Tour · 2025</div>
+    <div class="hero-title">Diagnóstico<br>de <em>marca actual</em></div>
+    <div class="hero-sub">Lo que tiene, lo que le falta y dónde está la oportunidad real en un mercado saturado de agencias de tours que suenan idénticas.</div>
+  </div>
+  <div class="page-body">
+
+    <div class="section">
+      <div class="section-label">Análisis del nombre</div>
+      <div class="grid-2">
+        <div class="card" style="border-left:3px solid var(--jungla);border-radius:0 14px 14px 0">
+          <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--jungla);margin-bottom:10px">Fortalezas</div>
+          <ul class="diag-list list-pos">
+            <li>El adjetivo "sorprendente" implica una promesa emocional — no es neutro</li>
+            <li>Fácil de pronunciar en español e inglés para turistas internacionales</li>
+            <li>Evoca emoción y experiencia, no solo transporte o logística</li>
+            <li>Dominio web corto y recordable</li>
+          </ul>
+        </div>
+        <div class="card" style="border-left:3px solid var(--tierra);border-radius:0 14px 14px 0">
+          <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tierra);margin-bottom:10px">Debilidades</div>
+          <ul class="diag-list list-neg">
+            <li>"Tour" es la palabra más genérica y comoditizada del sector turístico</li>
+            <li>No comunica dónde, qué tipo de experiencia ni para quién</li>
+            <li>Cualquier agencia de cualquier país puede llamarse "sorprendente"</li>
+            <li>No construye tribu, comunidad ni identidad específica</li>
+            <li>Difícil de diferenciar visualmente en una lista de búsqueda</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Problema de posicionamiento</div>
+      <div class="card" style="background:var(--tierra-p);border-color:#f5c6a0;margin-bottom:14px">
+        <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tierra);margin-bottom:10px">El problema #1 — Sin territorio propio</div>
+        <ul class="diag-list list-neg">
+          <li>Se presenta como "tours en Xilitla" — exactamente lo mismo que las otras 10+ agencias de la zona</li>
+          <li>No hay un ángulo diferenciador que capture por qué ELLOS y no los demás</li>
+          <li>El sitio web informa pero no seduce. El cliente llega a comparar precio, no a comprar deseo</li>
+          <li>Sin voz de marca consistente: el copy podría intercambiarse con cualquier agencia de México</li>
+          <li>No hay jerarquía de experiencias — todo parece igual de importante (y por tanto nada lo es)</li>
+        </ul>
+      </div>
+      <div class="card" style="background:#0F1A10">
+        <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--cascada);margin-bottom:10px">El problema #2 — Categoría equivocada</div>
+        <ul class="diag-list" style="color:#93B9A0">
+          <li style="border-color:rgba(255,255,255,.08);color:#93B9A0">Se compite en la categoría "agencias de tours" — una categoría de precio</li>
+          <li style="border-color:rgba(255,255,255,.08);color:#93B9A0">La oportunidad real es salir de esa categoría y entrar en "experiencias de vida irrepetibles"</li>
+          <li style="border-color:rgba(255,255,255,.08);color:#93B9A0">Nadie paga premium por un "tour" — sí paga premium por una historia que va a contar el resto de su vida</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">La oportunidad oculta</div>
+      <div class="card" style="background:var(--verde-p);border-color:#93D4A6">
+        <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--jungla);margin-bottom:10px">El activo que nadie está explotando</div>
+        <ul class="diag-list list-opp">
+          <li>Son guías LOCALES — no intermediarios. Conocen la Huasteca con una profundidad que ningún outsider puede replicar</li>
+          <li>La región tiene destinos de clase mundial (Sótano de las Golondrinas, Las Pozas) que todavía son "secretos" para el turismo masivo</li>
+          <li>El cliente de hoy busca autenticidad, no paquetes. Busca sentirse explorador, no turista</li>
+          <li>La combinación selva + surrealismo (Edward James) + naturaleza extrema es única en el mundo — no existe igual en ningún otro lugar</li>
+          <li>Las reseñas de Tripadvisor revelan que la gente ya vive experiencias extraordinarias — el problema es que la marca no lo comunica</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Diagnóstico ejecutivo</div>
+      <div class="usp-box">
+        <div class="usp-label">Conclusión estratégica</div>
+        <div class="usp-text">"La marca tiene el producto correcto con la historia equivocada. El desafío no es mejorar los tours — es reencuadrar lo que se vende."</div>
+        <div class="usp-explain">Sorprendente Tour no vende excursiones. Vende acceso a una de las regiones más extraordinarias y menos conocidas de México, guiado por personas que crecieron en ella. Eso vale mucho más de lo que actualmente comunica y cobra.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     2. POSICIONAMIENTO
+══════════════════════════════════════════════════════════ -->
+<div class="view" id="v-posicionamiento">
+  <div class="hero">
+    <div class="hero-eyebrow">Estrategia de marca</div>
+    <div class="hero-title">Propuesta de<br><em>posicionamiento</em></div>
+    <div class="hero-sub">Definir con precisión quirúrgica el territorio que ninguna otra agencia de la Huasteca puede ocupar — y plantarse ahí.</div>
+  </div>
+  <div class="page-body">
+
+    <div class="section">
+      <div class="section-label">Propuesta de valor única (USP)</div>
+      <div class="usp-box" style="margin-bottom:14px">
+        <div class="usp-label">Para el cliente</div>
+        <div class="usp-text">"La única forma de ver la Huasteca Potosina como la ven las personas que nacieron en ella — no desde una ventana de autobús, sino desde el barro, el agua y la selva real."</div>
+        <div class="usp-explain">Esta USP ataca el insight central: el turista moderno tiene terror a los tours genéricos. Quiere sentir que está donde pocos han estado, guiado por alguien que realmente pertenece a ese lugar.</div>
+      </div>
+      <div class="usp-box">
+        <div class="usp-label">Para la empresa (propuesta interna)</div>
+        <div class="usp-text">"No somos guías de turismo. Somos los traductores de la Huasteca."</div>
+        <div class="usp-explain">Este reencuadre interno cambia cómo el equipo habla, actúa y se percibe. Un "guía de turismo" lleva gente de punto A a punto B. Un "traductor" descifra una cultura, una geografía, una historia. Es una diferencia de $500 a $2,500 por persona.</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Territorio de marca</div>
+      <div class="grid-2" style="margin-bottom:14px">
+        <div class="card">
+          <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta3);margin-bottom:8px">Lo que somos</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--selva);line-height:1.4">Naturaleza extrema con alma local. Aventura auténtica, no curada para Instagram.</div>
+        </div>
+        <div class="card">
+          <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta3);margin-bottom:8px">Lo que NO somos</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--tierra);line-height:1.4">No somos un paquete de agencia. No somos un resort. No somos "experiencia premium" en el sentido frío de la palabra.</div>
+        </div>
+      </div>
+      <div class="card" style="background:var(--hueso)">
+        <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta3);margin-bottom:12px">Los 4 pilares del territorio</div>
+        <div class="grid-2">
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--selva);margin-bottom:4px">01 — LOCAL RADICAL</div>
+            <div style="font-size:12px;color:var(--tinta3);line-height:1.6">Los guías no "trabajan en" la Huasteca. Ellos SON la Huasteca. Eso no se puede comprar ni copiar.</div>
+          </div>
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--selva);margin-bottom:4px">02 — NATURALEZA SIN FILTRO</div>
+            <div style="font-size:12px;color:var(--tinta3);line-height:1.6">Cascadas reales, selva real, peligro controlado real. No hay versión suavizada para turistas cómodos.</div>
+          </div>
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--selva);margin-bottom:4px">03 — LO SURREAL ES REAL</div>
+            <div style="font-size:12px;color:var(--tinta3);line-height:1.6">Edward James escogió la Huasteca por una razón. La región tiene algo que escapa a la lógica ordinaria — y eso hay que venderlo.</div>
+          </div>
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--selva);margin-bottom:4px">04 — HISTORIA QUE SE CUENTA</div>
+            <div style="font-size:12px;color:var(--tinta3);line-height:1.6">El cliente no compra un día de actividades. Compra una historia que va a contar en cenas durante años.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Big Idea de marca</div>
+      <div class="big-idea">
+        <div class="bi-label">La idea central que lo une todo</div>
+        <div class="bi-text">Hay lugares que se visitan.<br>La Huasteca se <em style="font-style:italic">vive</em>.</div>
+        <div class="bi-sub">Esta frase funciona como norte estratégico para todo: el copy de la web, las publicaciones de Instagram, cómo se presenta el guía al inicio del tour, qué recuerdo se le da al cliente al final. Todo deriva de aquí. No "vivir" en sentido genérico — sino en el sentido de que quien viene a la Huasteca con nosotros sale siendo diferente a como llegó.</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Diferenciador vs competencia local</div>
+      <div class="card">
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:12px">
+            <thead>
+              <tr>
+                <th style="text-align:left;padding:10px 12px;font-family:'Syne',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta3);border-bottom:2px solid var(--borde)">Aspecto</th>
+                <th style="text-align:left;padding:10px 12px;font-family:'Syne',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta3);border-bottom:2px solid var(--borde)">Competencia genérica</th>
+                <th style="text-align:left;padding:10px 12px;font-family:'Syne',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--jungla);border-bottom:2px solid var(--borde)">Sorprendente Tour (nuevo)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid var(--borde)">
+                <td style="padding:10px 12px;font-weight:500;color:var(--tinta)">Propuesta</td>
+                <td style="padding:10px 12px;color:var(--tinta3)">"Tours a cascadas y Xilitla"</td>
+                <td style="padding:10px 12px;color:var(--selva);font-weight:500">"La Huasteca contada por sus propios habitantes"</td>
+              </tr>
+              <tr style="border-bottom:1px solid var(--borde);background:var(--crema)">
+                <td style="padding:10px 12px;font-weight:500;color:var(--tinta)">Precio</td>
+                <td style="padding:10px 12px;color:var(--tinta3)">Compiten a la baja</td>
+                <td style="padding:10px 12px;color:var(--selva);font-weight:500">Premium justificado por autenticidad y expertise local</td>
+              </tr>
+              <tr style="border-bottom:1px solid var(--borde)">
+                <td style="padding:10px 12px;font-weight:500;color:var(--tinta)">Visual</td>
+                <td style="padding:10px 12px;color:var(--tinta3)">Fotos de stock o turistas posando</td>
+                <td style="padding:10px 12px;color:var(--selva);font-weight:500">Fotografía cinematográfica: selva, agua, luz filtrada, personas reales en acción</td>
+              </tr>
+              <tr style="border-bottom:1px solid var(--borde);background:var(--crema)">
+                <td style="padding:10px 12px;font-weight:500;color:var(--tinta)">Copy</td>
+                <td style="padding:10px 12px;color:var(--tinta3)">"Conoce los mejores atractivos con guías certificados"</td>
+                <td style="padding:10px 12px;color:var(--selva);font-weight:500">"Llegaste a Xilitla como turista. Te vas a ir como conocedor."</td>
+              </tr>
+              <tr>
+                <td style="padding:10px 12px;font-weight:500;color:var(--tinta)">Recuerdo</td>
+                <td style="padding:10px 12px;color:var(--tinta3)">Un folleto, una foto borrosa</td>
+                <td style="padding:10px 12px;color:var(--selva);font-weight:500">Una historia, una foto editorial, un objeto local de despedida</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     3. RUTAS CREATIVAS
+══════════════════════════════════════════════════════════ -->
+<div class="view" id="v-rutas">
+  <div class="hero">
+    <div class="hero-eyebrow">Conceptos creativos</div>
+    <div class="hero-title">Tres rutas<br><em>de marca</em></div>
+    <div class="hero-sub">Tres direcciones estratégicas distintas. La recomendación es la Ruta 2, pero el cliente debe elegir cuál resuena con su visión a largo plazo.</div>
+  </div>
+  <div class="page-body">
+
+    <div class="section">
+      <div class="stack">
+
+        <!-- RUTA 1 -->
+        <div class="route r1">
+          <div class="route-num">Ruta 01 — Recomendada para familia y grupos</div>
+          <div class="route-name">La Huasteca Sin Filtro</div>
+          <div class="route-tagline" style="color:var(--jungla)">Aventura auténtica · Extrema y accesible</div>
+          <div class="route-body">La marca se posiciona como la agencia que no suaviza nada. Las cascadas son frías y fuertes. El Sótano de las Golondrinas te quita el aliento. El RZR te llena de lodo. Y eso es exactamente el punto. Para personas que están hartas de experiencias "seguras para todos".</div>
+          <div class="route-detail">
+            <div class="route-detail-item" style="color:var(--tinta2)">
+              <strong style="color:var(--jungla)">Emoción central</strong>Adrenalina + orgullo de haber ido más lejos que los demás
+            </div>
+            <div class="route-detail-item" style="color:var(--tinta2)">
+              <strong style="color:var(--jungla)">Cliente ideal</strong>Hombres y mujeres 25–45, viajeros activos, grupos de amigos, parejas aventureras
+            </div>
+            <div class="route-detail-item" style="color:var(--tinta2)">
+              <strong style="color:var(--jungla)">Tono de voz</strong>Directo, sin adornos, honesto, casi retador
+            </div>
+            <div class="route-detail-item" style="color:var(--tinta2)">
+              <strong style="color:var(--jungla)">Riesgo</strong>Puede excluir familias con niños o viajeros más tranquilos
+            </div>
+          </div>
+          <div class="pills">
+            <span class="pill" style="background:#E8F5EE;color:#1B4332">Extremo</span>
+            <span class="pill" style="background:#E8F5EE;color:#1B4332">Auténtico</span>
+            <span class="pill" style="background:#E8F5EE;color:#1B4332">Sin concesiones</span>
+            <span class="pill" style="background:var(--borde);color:var(--tinta3)">Copy agresivo</span>
+            <span class="pill" style="background:var(--borde);color:var(--tinta3)">Visual oscuro y contrastado</span>
+          </div>
+        </div>
+
+        <!-- RUTA 2 -->
+        <div class="route r2">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <div class="route-num" style="margin-bottom:0">Ruta 02</div>
+            <span class="badge badge-dark">Recomendada</span>
+          </div>
+          <div class="route-name">Donde lo Real se Vuelve Mito</div>
+          <div class="route-tagline">Mística + local + cinematográfica</div>
+          <div class="route-body">La Huasteca Potosina es objetivamente uno de los lugares más extraños y hermosos de México. Un jardín surrealista en medio de la selva. Un abismo donde miles de pájaros vuelan en espiral al amanecer. Cascadas que parecen pintadas. Esta ruta posiciona la marca en el territorio de lo increíble-pero-real, para personas que buscan experiencias que desafían su concepto de lo posible.</div>
+          <div class="route-detail">
+            <div class="route-detail-item">
+              <strong>Emoción central</strong>Asombro profundo. La sensación de haber visto algo que pocas personas han visto.
+            </div>
+            <div class="route-detail-item">
+              <strong>Cliente ideal</strong>Viajeros sofisticados 28–55, profesionales creativos, fotógrafos, parejas en viajes especiales, extranjeros
+            </div>
+            <div class="route-detail-item">
+              <strong>Tono de voz</strong>Poético pero concreto. Evocador sin ser pretencioso. Como la narración de un buen documental.
+            </div>
+            <div class="route-detail-item">
+              <strong>Precio</strong>Justifica tarifas premium con naturalidad. El valor percibido es muy alto.
+            </div>
+          </div>
+          <div class="pills">
+            <span class="pill" style="background:rgba(76,175,122,.15);color:#4CAF7A">Mística</span>
+            <span class="pill" style="background:rgba(76,175,122,.15);color:#4CAF7A">Cinematográfica</span>
+            <span class="pill" style="background:rgba(76,175,122,.15);color:#4CAF7A">Premium accesible</span>
+            <span class="pill" style="background:rgba(255,255,255,.08);color:#93B9A0">Amplísimo público</span>
+            <span class="pill" style="background:rgba(255,255,255,.08);color:#93B9A0">Alta conversión digital</span>
+          </div>
+        </div>
+
+        <!-- RUTA 3 -->
+        <div class="route r3">
+          <div class="route-num">Ruta 03 — Recomendada si se apunta al mercado internacional</div>
+          <div class="route-name">La Ruta de los Que Saben</div>
+          <div class="route-tagline" style="color:var(--tierra)">Curated · Insider · Slow travel</div>
+          <div class="route-body">Una marca para los que ya viajaron a todos los sitios de moda y quieren algo que los demás no tienen: un destino que todavía no está en TikTok, guiado por alguien que te va a contar lo que no sale en ninguna guía. Posicionamiento de "joyas ocultas" para el viajero con criterio.</div>
+          <div class="route-detail">
+            <div class="route-detail-item" style="color:var(--tinta2)">
+              <strong style="color:var(--tierra)">Emoción central</strong>Exclusividad sin ostentación. Orgullo de "descubrir" lo que nadie conoce
+            </div>
+            <div class="route-detail-item" style="color:var(--tinta2)">
+              <strong style="color:var(--tierra)">Cliente ideal</strong>Millennials mayores y Gen X con poder adquisitivo, viajeros frecuentes, ex-pats, nómadas digitales
+            </div>
+            <div class="route-detail-item" style="color:var(--tinta2)">
+              <strong style="color:var(--tierra)">Tono de voz</strong>Confidencial, cálido, como un amigo que te da un tip que no comparte con todos
+            </div>
+            <div class="route-detail-item" style="color:var(--tinta2)">
+              <strong style="color:var(--tierra)">Riesgo</strong>Público más pequeño, requiere más tiempo para construir la percepción de "insider"
+            </div>
+          </div>
+          <div class="pills">
+            <span class="pill" style="background:#FEF3E6;color:#92400E">Exclusivo</span>
+            <span class="pill" style="background:#FEF3E6;color:#92400E">Slow travel</span>
+            <span class="pill" style="background:#FEF3E6;color:#92400E">Insider</span>
+            <span class="pill" style="background:var(--borde);color:var(--tinta3)">Precio muy alto</span>
+            <span class="pill" style="background:var(--borde);color:var(--tinta3)">Mercado internacional</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     4. NAMING
+══════════════════════════════════════════════════════════ -->
+<div class="view" id="v-naming">
+  <div class="hero">
+    <div class="hero-eyebrow">Estrategia de nombre</div>
+    <div class="hero-title">Naming:<br><em>¿cambiar o potenciar?</em></div>
+    <div class="hero-sub">El nombre actual tiene valor acumulado. La recomendación no es eliminarlo sino potenciarlo estratégicamente — con una identidad visual y verbal que lo haga memorable.</div>
+  </div>
+  <div class="page-body">
+
+    <div class="section">
+      <div class="section-label">Veredicto sobre el nombre actual</div>
+      <div class="card" style="background:var(--negro);margin-bottom:14px">
+        <div class="usp-label">Recomendación estratégica</div>
+        <div class="usp-text">"Mantener 'Sorprendente Tour' como nombre legal y operativo — pero lanzar una sub-marca de posicionamiento que sea el verdadero motor de diferenciación."</div>
+        <div class="usp-explain">El nombre ya tiene reseñas, SEO acumulado y reconocimiento local. No vale la pena destruir ese capital. La estrategia inteligente es crear una capa de identidad encima — como hizo Patagonia que legalmente se llama "Lost Arrow" — que sea la que genere deseo.</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Sub-marca recomendada</div>
+      <div class="card" style="background:var(--negro);border:2px solid var(--jungla);margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <span class="badge" style="background:var(--tierra);color:#fff">Nombre recomendado</span>
+        </div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:var(--arena);margin-bottom:6px">Huasteca Profunda</div>
+        <div style="font-family:'Syne',sans-serif;font-size:10px;letter-spacing:.14em;color:var(--cascada);margin-bottom:12px;text-transform:uppercase">por Sorprendente Tour</div>
+        <div style="font-size:13px;color:#6B8F74;line-height:1.7">"Profunda" trabaja en tres niveles simultáneos: la profundidad geográfica (cañones, sótanos, cascadas), la profundidad cultural (raíces huastecas, Edward James, historia prehispánica) y la profundidad de experiencia (no superficial, no para Instagram, real). Es un nombre que promete algo que la competencia no puede prometer.</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Alternativas de naming (si se decide cambio total)</div>
+      <div class="name-row">
+
+        <div class="name-card winner">
+          <span class="badge badge-dark name-badge">Top pick</span>
+          <div class="name-word">Huasteca Profunda</div>
+          <div class="name-why">Evoca geografía real + experiencia de inmersión. Único, pronunciable, SEO potente. Sin competencia directa en Google.</div>
+        </div>
+
+        <div class="name-card">
+          <span class="badge badge-terra name-badge">Fuerte</span>
+          <div class="name-word">Xilitla Salvaje</div>
+          <div class="name-why">Geolocaliza inmediatamente + promesa de autenticidad sin concesiones. Muy bueno para mercado de aventura.</div>
+        </div>
+
+        <div class="name-card">
+          <span class="badge badge-terra name-badge">Fuerte</span>
+          <div class="name-word">Tierra Huasteca</div>
+          <div class="name-why">Conecta con raíces e identidad local. Cálido, evoca sabor y cultura además de naturaleza.</div>
+        </div>
+
+        <div class="name-card">
+          <span class="badge badge-green name-badge">Interesante</span>
+          <div class="name-word">Las Pozas Guías</div>
+          <div class="name-why">Ancla al destino más icónico de la zona. Alto SEO. Riesgo: muy específico geográficamente.</div>
+        </div>
+
+        <div class="name-card">
+          <span class="badge badge-green name-badge">Interesante</span>
+          <div class="name-word">Selva Adentro</div>
+          <div class="name-why">Evoca inmersión y aventura. Simple, memorable, bilingüe. Bueno para mercado internacional.</div>
+        </div>
+
+        <div class="name-card">
+          <span class="badge badge-green name-badge">Internacional</span>
+          <div class="name-word">Huasteca Wild</div>
+          <div class="name-why">Funciona para mercado angloparlante. "Wild" en inglés tiene connotaciones de experiencia auténtica y no domesticada.</div>
+        </div>
+
+        <div class="name-card">
+          <div class="name-word">Venas de Agua</div>
+          <div class="name-why">Poético y único. Las cascadas y ríos son el sistema circulatorio de la Huasteca. Alto potencial de marca premium.</div>
+        </div>
+
+        <div class="name-card">
+          <div class="name-word">Guías de Raíz</div>
+          <div class="name-why">Enfatiza el capital humano y la autenticidad local. Bueno si el diferenciador son las personas, no solo los destinos.</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     5. IDENTIDAD VISUAL
+══════════════════════════════════════════════════════════ -->
+<div class="view" id="v-visual">
+  <div class="hero">
+    <div class="hero-eyebrow">Diseño y sistema visual</div>
+    <div class="hero-title">Identidad<br><em>visual</em></div>
+    <div class="hero-sub">Un sistema visual que no parece "agencia de tours de provincia" — sino una marca de destino de clase mundial que simplemente está en la Huasteca.</div>
+  </div>
+  <div class="page-body">
+
+    <div class="section">
+      <div class="section-label">Paleta de color — con lógica psicológica</div>
+      <div class="palette" style="margin-bottom:16px">
+        <div class="swatch-col">
+          <div class="swatch-block" style="background:#0F1A10"></div>
+          <div class="swatch-info"><div class="sw-name">Noche de Selva</div><div class="sw-hex">#0F1A10</div><div class="sw-role">Primario oscuro</div></div>
+        </div>
+        <div class="swatch-col">
+          <div class="swatch-block" style="background:#1B3A2A"></div>
+          <div class="swatch-info"><div class="sw-name">Selva</div><div class="sw-hex">#1B3A2A</div><div class="sw-role">Secundario</div></div>
+        </div>
+        <div class="swatch-col">
+          <div class="swatch-block" style="background:#2D6A4F"></div>
+          <div class="swatch-info"><div class="sw-name">Jungla</div><div class="sw-hex">#2D6A4F</div><div class="sw-role">Verde activo</div></div>
+        </div>
+        <div class="swatch-col">
+          <div class="swatch-block" style="background:#4CAF7A"></div>
+          <div class="swatch-info"><div class="sw-name">Cascada</div><div class="sw-hex">#4CAF7A</div><div class="sw-role">Acento fresco</div></div>
+        </div>
+        <div class="swatch-col">
+          <div class="swatch-block" style="background:#C4703A"></div>
+          <div class="swatch-info"><div class="sw-name">Tierra</div><div class="sw-hex">#C4703A</div><div class="sw-role">Acento cálido</div></div>
+        </div>
+        <div class="swatch-col">
+          <div class="swatch-block" style="background:#E8B87A"></div>
+          <div class="swatch-info"><div class="sw-name">Arena Dorada</div><div class="sw-hex">#E8B87A</div><div class="sw-role">Lujo sutil</div></div>
+        </div>
+        <div class="swatch-col">
+          <div class="swatch-block" style="background:#FAF8F2"></div>
+          <div class="swatch-info"><div class="sw-name">Crema</div><div class="sw-hex">#FAF8F2</div><div class="sw-role">Fondo cálido</div></div>
+        </div>
+      </div>
+      <div class="card" style="background:var(--crema)">
+        <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta3);margin-bottom:10px">La lógica detrás de la paleta</div>
+        <div class="grid-2">
+          <div style="font-size:12px;color:var(--tinta2);line-height:1.7"><strong style="color:var(--selva)">Negros-verdes profundos:</strong> Evocan la selva densa, la noche en la montaña, lo desconocido. Psicológicamente: misterio, profundidad, calidad. Son los colores que nunca se ven en las agencias de tours (que usan azules turquesa genéricos).</div>
+          <div style="font-size:12px;color:var(--tinta2);line-height:1.7"><strong style="color:var(--tierra)">Tierra y arena:</strong> Contrastante cálido que evoca la tierra huasteca, la cerámica indígena, el atardecer en la sierra. Psicológicamente: calidez, pertenencia, autenticidad. Evitan que la marca se sienta fría o corporativa.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Sistema tipográfico</div>
+      <div class="type-showcase stack">
+        <div class="type-card card">
+          <div class="type-sample-display">La Huasteca <em>te sorprende.</em></div>
+          <div class="type-meta">Cormorant Garamond · Titulares, hero, nombre de marca</div>
+          <div class="type-use">Uso: hero section web, nombres de tours, titulares de OOH. Transmite: historia, naturaleza, algo más viejo y más verdadero que el Instagram de turismo.</div>
+        </div>
+        <div class="type-card card">
+          <div class="type-sample-caps">Tours · Xilitla · Huasteca Potosina</div>
+          <div class="type-meta">Syne · Etiquetas, navegación, CTAs, datos</div>
+          <div class="type-use">Uso: navegación web, badges, precios, calls to action. Transmite: modernidad, precisión, confianza. El contrapunto contemporáneo al serif clásico.</div>
+        </div>
+        <div class="type-card card">
+          <div class="type-sample-body">Nuestros guías crecieron en estas montañas. Conocen cada cascada por su nombre, cada sendero por sus piedras, cada atardecer por el ángulo exacto de la luz. No te llevan a ver la Huasteca — te la presentan.</div>
+          <div class="type-meta">Inter · Cuerpo de texto, descripciones, WhatsApp</div>
+          <div class="type-use">Uso: todo el texto de lectura. Transmite: claridad, accesibilidad, conversación directa sin pretensiones.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Dirección fotográfica — el activo más importante</div>
+      <div class="grid-3">
+        <div class="photo-card">
+          <div style="width:100%;height:6px;background:#0F1A10;border-radius:3px;margin-bottom:10px"></div>
+          <div class="photo-title">Paleta oscura y dramática</div>
+          <div class="photo-desc">Subexponer ligeramente. Dejar que las sombras de la selva sean protagonistas. La luz que se filtra entre los árboles es el acento, no el todo.</div>
+          <div class="photo-kw">
+            <span>Sombra como elemento</span>
+            <span>Luz filtrada</span>
+            <span>Contraste alto</span>
+            <span>Sin HDR</span>
+          </div>
+        </div>
+        <div class="photo-card">
+          <div style="width:100%;height:6px;background:#2D6A4F;border-radius:3px;margin-bottom:10px"></div>
+          <div class="photo-title">Personas en acción real</div>
+          <div class="photo-desc">Cero poses forzadas. La cámara los sorprende mirando la cascada, cruzando el río, escuchando al guía. La emoción natural vende más que la sonrisa perfecta.</div>
+          <div class="photo-kw">
+            <span>Candid</span>
+            <span>Asombro genuino</span>
+            <span>Movimiento</span>
+            <span>Sin poses</span>
+          </div>
+        </div>
+        <div class="photo-card">
+          <div style="width:100%;height:6px;background:#C4703A;border-radius:3px;margin-bottom:10px"></div>
+          <div class="photo-title">Escala dramática</div>
+          <div class="photo-desc">Una persona pequeña frente al Sótano de las Golondrinas. Una silueta bajo las estructuras de Las Pozas. La escala comunica lo que las palabras no pueden.</div>
+          <div class="photo-kw">
+            <span>Humano vs naturaleza</span>
+            <span>Gran angular</span>
+            <span>Vertical para redes</span>
+            <span>Sin drones</span>
+          </div>
+        </div>
+        <div class="photo-card">
+          <div style="width:100%;height:6px;background:#4CAF7A;border-radius:3px;margin-bottom:10px"></div>
+          <div class="photo-title">El guía como personaje</div>
+          <div class="photo-desc">Retratos con dignidad y carácter. El guía no es un accesorio del tour — es el protagonista. Su historia vende la experiencia.</div>
+          <div class="photo-kw">
+            <span>Retrato editorial</span>
+            <span>Luz natural</span>
+            <span>Contexto local</span>
+          </div>
+        </div>
+        <div class="photo-card">
+          <div style="width:100%;height:6px;background:#E8B87A;border-radius:3px;margin-bottom:10px"></div>
+          <div class="photo-title">Detalles que cuentan historias</div>
+          <div class="photo-desc">La mano del guía señalando algo. El agua turquesa entre las rocas negras. Una flor que solo existe en la Huasteca. Los detalles construyen el mundo.</div>
+          <div class="photo-kw">
+            <span>Macro táctil</span>
+            <span>Texturas</span>
+            <span>Color turquesa-negro</span>
+          </div>
+        </div>
+        <div class="photo-card">
+          <div style="width:100%;height:6px;background:#FAF8F2;border-radius:3px;border:1px solid var(--borde);margin-bottom:10px"></div>
+          <div class="photo-title">Lo que NUNCA hacer</div>
+          <div class="photo-desc">Sin selfies de turistas sonriendo forzado. Sin filtros de Instagram que saturen los verdes. Sin fotos de stock. Sin logos sobreimpresos en las imágenes.</div>
+          <div class="photo-kw">
+            <span style="background:#FEE2E2;color:#991B1B">Sin stock</span>
+            <span style="background:#FEE2E2;color:#991B1B">Sin oversaturación</span>
+            <span style="background:#FEE2E2;color:#991B1B">Sin selfies posadas</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Estilo visual general</div>
+      <div class="card" style="background:var(--negro)">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--cascada);margin-bottom:10px">Referentes visuales</div>
+            <ul style="list-style:none;display:flex;flex-direction:column;gap:7px">
+              <li style="font-size:12px;color:#93B9A0;line-height:1.5;padding-left:14px;border-left:2px solid var(--jungla)">Revistas <em style="color:var(--arena)">National Geographic Traveler</em> — composición dramática, narrativa visual fuerte</li>
+              <li style="font-size:12px;color:#93B9A0;line-height:1.5;padding-left:14px;border-left:2px solid var(--jungla)">Marca <em style="color:var(--arena)">Patagonia</em> — autenticidad, personas reales en ambientes reales</li>
+              <li style="font-size:12px;color:#93B9A0;line-height:1.5;padding-left:14px;border-left:2px solid var(--jungla)">Documentales de <em style="color:var(--arena)">BBC Earth</em> — la naturaleza como protagonista con peso épico</li>
+            </ul>
+          </div>
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--cascada);margin-bottom:10px">Anti-referentes</div>
+            <ul style="list-style:none;display:flex;flex-direction:column;gap:7px">
+              <li style="font-size:12px;color:#6B5E52;line-height:1.5;padding-left:14px;border-left:2px solid rgba(255,255,255,.1)">Folletos turísticos con montaje de fotos pequeñas</li>
+              <li style="font-size:12px;color:#6B5E52;line-height:1.5;padding-left:14px;border-left:2px solid rgba(255,255,255,.1)">Turquesa saturado + fuente sans-serif genérica</li>
+              <li style="font-size:12px;color:#6B5E52;line-height:1.5;padding-left:14px;border-left:2px solid rgba(255,255,255,.1)">Grupos posando frente a una cascada con chaleco de tours</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     6. VOZ Y COPY
+══════════════════════════════════════════════════════════ -->
+<div class="view" id="v-voz">
+  <div class="hero">
+    <div class="hero-eyebrow">Comunicación de marca</div>
+    <div class="hero-title">Voz, tono<br><em>y copy</em></div>
+    <div class="hero-sub">Cómo habla la marca en cada canal. El copy es el producto antes del producto — es lo que hace que alguien pase de "lo pienso" a "lo reservo".</div>
+  </div>
+  <div class="page-body">
+
+    <div class="section">
+      <div class="section-label">Atributos de voz</div>
+      <div class="grid-2" style="margin-bottom:16px">
+        <div class="card" style="background:var(--verde-p)">
+          <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--jungla);margin-bottom:10px">La voz ES</div>
+          <ul class="diag-list list-pos">
+            <li>Evocadora sin ser cursi</li>
+            <li>Específica (nombres reales, detalles concretos)</li>
+            <li>Confidente: habla como quien conoce un secreto</li>
+            <li>Con autoridad local, nunca arrogante</li>
+            <li>Cinematográfica pero conversacional</li>
+          </ul>
+        </div>
+        <div class="card" style="background:var(--tierra-p)">
+          <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tierra);margin-bottom:10px">La voz NO ES</div>
+          <ul class="diag-list list-neg">
+            <li>"Vive una experiencia única e inolvidable"</li>
+            <li>Exclamaciones vacías y emoticones en exceso</li>
+            <li>Listados de características (2h, 4 personas, precio)</li>
+            <li>Corporativo o frío</li>
+            <li>Condescendiente con el destino</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Hero section — web principal</div>
+      <div class="copy-block terra">
+        <div class="copy-ctx">Versión A — emocional</div>
+        <div class="copy-text">Hay un lugar en México donde la selva creció alrededor de un castillo surrealista, donde los pájaros caen en espiral hacia un abismo de 500 metros cada amanecer, y donde las cascadas tienen el color exacto del jade. Nosotros te llevamos.</div>
+      </div>
+      <div class="copy-block selva">
+        <div class="copy-ctx">Versión B — confrontacional</div>
+        <div class="copy-text" style="color:#fff;font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;line-height:1.45">Llegaste a Xilitla como turista.<br>Te vas a ir como conocedor.</div>
+      </div>
+      <div class="copy-block dark">
+        <div class="copy-ctx">Subtítulo hero</div>
+        <div class="copy-text">Tours en la Huasteca Potosina guiados por personas que <em>nacieron aquí.</em> No somos intermediarios. Somos la región.</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Copy para cada recorrido</div>
+      <div class="stack">
+        <div class="copy-block light">
+          <div class="copy-ctx">Sótano de las Golondrinas</div>
+          <div class="copy-text">El sexto abismo más profundo del mundo está en San Luis Potosí — y la mayoría de los mexicanos no lo sabe. Al amanecer, miles de vencejos suben en espiral desde 500 metros de profundidad. Ves eso una vez y reencuadras lo que significa "impresionante".</div>
+        </div>
+        <div class="copy-block light">
+          <div class="copy-ctx">Jardín Surrealista de Edward James</div>
+          <div class="copy-text">Un poeta inglés multimillonario decidió construir su paraíso personal en medio de la selva huasteca. Lo que construyó no tiene nombre — no es un jardín, no es un castillo, no es un museo. Nuestros guías te explican por qué lo hizo aquí y por qué Xilitla lo eligió a él.</div>
+        </div>
+        <div class="copy-block light">
+          <div class="copy-ctx">Tours en RZR / Can-Am</div>
+          <div class="copy-text">La manera más honesta de ver la Huasteca: con lodo en las llantas, selva a los dos lados, y un guía local que conoce cada curva de cada brecha desde que tenía diez años. Sin carretera principal, sin punto de interés señalado, sin grupo de 30 personas.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Copy para anuncios digitales (Meta / Google)</div>
+      <div class="stack">
+        <div class="copy-block dark">
+          <div class="copy-ctx">Anuncio frío — awareness</div>
+          <div class="copy-text">¿Sabías que en México existe un abismo donde miles de pájaros vuelan en espiral cada amanecer? <em>Se llama el Sótano de las Golondrinas.</em> Está en San Luis Potosí y casi nadie lo conoce. Nosotros te llevamos.</div>
+        </div>
+        <div class="copy-block dark">
+          <div class="copy-ctx">Anuncio retargeting — conversión</div>
+          <div class="copy-text">Ya lo sabes: la Huasteca Potosina es uno de los lugares más extraordinarios de México. La pregunta es quién te la va a mostrar — ¿alguien que la conoce de un folleto o <em>alguien que creció en ella?</em></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">WhatsApp — mensaje de primer contacto del bot</div>
+      <div class="copy-block light">
+        <div class="copy-ctx">Mensaje de bienvenida automatizado</div>
+        <div class="copy-text" style="font-family:'Inter',sans-serif;font-size:13px;line-height:1.75">
+          Hola, bienvenido a <strong>Sorprendente Tour</strong> 🌿<br><br>
+          Somos guías locales de la Huasteca Potosina — llevamos años mostrando esta región a quienes quieren verla de verdad.<br><br>
+          Dime: ¿cuándo piensas venir y qué quieres experimentar? Con eso te digo exactamente qué hacer y qué no perderte.
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Instagram — captions modelo</div>
+      <div class="stack">
+        <div class="copy-block light">
+          <div class="copy-ctx">Post de paisaje</div>
+          <div class="copy-text">El Tamul no es solo la cascada más alta de San Luis Potosí. Es el sonido de 300 metros de caída libre que escuchas antes de verla. Muchos llegan a fotografiarla. Pocos se quedan a simplemente escucharla.<br><br><span style="color:var(--jungla)">#HuastecaPotosina #Tamul #Xilitla #SorprendenteTour #SelvaHuasteca</span></div>
+        </div>
+        <div class="copy-block light">
+          <div class="copy-ctx">Post del equipo / guías</div>
+          <div class="copy-text">Adrián lleva 12 años guiando en estas brechas. Conoce el nombre de cada planta, cuándo llueve con dos días de anticipación y el ángulo exacto desde el que el Jardín de Edward James se ve como lo imaginó su creador. Esto no se aprende en un curso. Se nace aquí.<br><br><span style="color:var(--jungla)">#GuíasLocales #HuastecaReal #Xilitla</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     7. EXPERIENCIA
+══════════════════════════════════════════════════════════ -->
+<div class="view" id="v-experiencia">
+  <div class="hero">
+    <div class="hero-eyebrow">Customer journey</div>
+    <div class="hero-title">La experiencia<br><em>de marca</em></div>
+    <div class="hero-sub">La marca no vive en el logo — vive en cada punto de contacto con el cliente. Antes, durante y después del tour.</div>
+  </div>
+  <div class="page-body">
+
+    <div class="section">
+      <div class="section-label">Customer journey completo</div>
+      <div class="stack">
+
+        <div class="journey-step">
+          <div class="j-dot antes">01</div>
+          <div>
+            <div class="j-phase">Antes del tour — Descubrimiento</div>
+            <div class="j-title">El cliente encuentra la marca en Instagram o Google</div>
+            <div class="j-detail">Lo que debe encontrar: una fotografía que lo detenga en el scroll. No una foto de cascada genérica — una imagen que haga que piense "¿dónde es eso?". El copy no dice "tours a Xilitla" — dice "el lugar que Edward James eligió para construir su paraíso".</div>
+          </div>
+        </div>
+
+        <div class="journey-step">
+          <div class="j-dot antes">02</div>
+          <div>
+            <div class="j-phase">Antes del tour — Consideración</div>
+            <div class="j-title">Llega al sitio web o al WhatsApp</div>
+            <div class="j-detail">El sitio web no debe parecer un catálogo de tours — debe parecer la introducción a un viaje épico. El bot de WhatsApp no responde con listas de precios — responde con una pregunta: "¿Qué quieres sentir?" La primera conversación establece el tono de todo lo demás.</div>
+          </div>
+        </div>
+
+        <div class="journey-step">
+          <div class="j-dot antes">03</div>
+          <div>
+            <div class="j-phase">Antes del tour — Confirmación</div>
+            <div class="j-title">El cliente reserva y recibe confirmación</div>
+            <div class="j-detail">El mensaje de confirmación no es un recibo. Es una carta de bienvenida breve que dice algo como: "Confirmado. Te esperamos el sábado. Trae ropa que no te importe mojar — las cascadas en la Huasteca no preguntan." Genera anticipación, no solo logística.</div>
+          </div>
+        </div>
+
+        <div class="journey-step" style="background:var(--negro);border-color:transparent">
+          <div class="j-dot durante">04</div>
+          <div>
+            <div class="j-phase" style="color:var(--cascada)">Durante el tour — El momento de la verdad</div>
+            <div class="j-title" style="color:#fff">El guía como narrador, no como chofer</div>
+            <div class="j-detail" style="color:#6B8F74">El guía no describe lo que se ve — cuenta la historia de lo que se ve. Por qué Edward James llegó aquí. Qué nombre le daban los huastecos al Sótano. Cómo se formaron las cascadas. Cada dato convierte una vista bonita en una historia que el cliente va a repetir.</div>
+          </div>
+        </div>
+
+        <div class="journey-step" style="background:var(--negro);border-color:transparent">
+          <div class="j-dot durante">05</div>
+          <div>
+            <div class="j-phase" style="color:var(--cascada)">Durante el tour — Momentos wow</div>
+            <div class="j-title" style="color:#fff">Los detalles que nadie espera</div>
+            <div class="j-detail" style="color:#6B8F74">Pequeños momentos diseñados: el guía detiene el RZR en un punto específico donde la luz hace algo extraordinario y dice "saca la cámara ahora". Una pausa en el silencio antes de la cascada para que el sonido llegue primero. Un dato que hace que el cliente diga "no lo puedo creer". Estas cosas no cuestan dinero — cuestan atención.</div>
+          </div>
+        </div>
+
+        <div class="journey-step" style="background:var(--negro);border-color:transparent">
+          <div class="j-dot durante">06</div>
+          <div>
+            <div class="j-phase" style="color:var(--cascada)">Durante — El contenido para redes</div>
+            <div class="j-title" style="color:#fff">El tour como producción de contenido</div>
+            <div class="j-detail" style="color:#6B8F74">El guía sabe exactamente dónde hay buena luz para una foto. Lo ofrece naturalmente: "Para, te voy a tomar una foto aquí — este punto no sale en ninguna guía". El cliente se va con 3-4 imágenes que realmente quiere compartir. Cada compartida es publicidad gratuita con credibilidad máxima.</div>
+          </div>
+        </div>
+
+        <div class="journey-step">
+          <div class="j-dot despues">07</div>
+          <div>
+            <div class="j-phase">Después del tour — El recuerdo tangible</div>
+            <div class="j-title">El objeto de despedida</div>
+            <div class="j-detail">Al final del tour, el guía entrega algo pequeño y local: una postal de la región con texto escrito a mano, un saquito de café huasteco, una piedra del río con el nombre del destino grabado. Costo: $30 pesos. Valor percibido: incalculable. El cliente lo fotografía, lo sube a redes, lo guarda para siempre.</div>
+          </div>
+        </div>
+
+        <div class="journey-step">
+          <div class="j-dot despues">08</div>
+          <div>
+            <div class="j-phase">Después del tour — Fidelización</div>
+            <div class="j-title">El mensaje post-tour</div>
+            <div class="j-detail">24 horas después del tour, el cliente recibe un mensaje de WhatsApp del guía (no del negocio, del guía específico que lo atendió): "Fue un placer mostrarte la Huasteca. Si quieres compartir alguna foto de hoy, cuélgala con #SorprendenteTour — me daría mucho gusto verla." Tasa de respuesta y reseñas: altísima.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Hacer el tour "instagrameable" con inteligencia</div>
+      <div class="card" style="background:var(--negro)">
+        <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--cascada);margin-bottom:12px">Los 5 momentos de foto que hay que diseñar</div>
+        <div class="stack">
+          <div style="padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06);display:flex;gap:14px">
+            <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--arena);width:24px;flex-shrink:0">01</div>
+            <div><div style="font-size:12px;font-weight:500;color:#fff;margin-bottom:2px">El punto de llegada al Sótano</div><div style="font-size:11px;color:#6B8F74;line-height:1.5">La persona de espaldas mirando el abismo. La composición más poderosa del tour. El guía sabe exactamente desde dónde tomarla.</div></div>
+          </div>
+          <div style="padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06);display:flex;gap:14px">
+            <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--arena);width:24px;flex-shrink:0">02</div>
+            <div><div style="font-size:12px;font-weight:500;color:#fff;margin-bottom:2px">La estructura de Edward James</div><div style="font-size:11px;color:#6B8F74;line-height:1.5">Un ángulo que hace que la construcción surreal parezca emerger de la selva. No el ángulo del turismo masivo — uno que solo los locales conocen.</div></div>
+          </div>
+          <div style="padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06);display:flex;gap:14px">
+            <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--arena);width:24px;flex-shrink:0">03</div>
+            <div><div style="font-size:12px;font-weight:500;color:#fff;margin-bottom:2px">El RZR en la brecha con selva</div><div style="font-size:11px;color:#6B8F74;line-height:1.5">Gran angular, selva en primer plano, figura humana al fondo. La foto que dice "estuve donde la mayoría no llega".</div></div>
+          </div>
+          <div style="padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06);display:flex;gap:14px">
+            <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--arena);width:24px;flex-shrink:0">04</div>
+            <div><div style="font-size:12px;font-weight:500;color:#fff;margin-bottom:2px">Las manos en el agua turquesa</div><div style="font-size:11px;color:#6B8F74;line-height:1.5">Primer plano táctil. El color del agua de las cascadas huastecas es genuinamente único. Una foto de manos en ese agua habla sola.</div></div>
+          </div>
+          <div style="padding:12px 0;display:flex;gap:14px">
+            <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--arena);width:24px;flex-shrink:0">05</div>
+            <div><div style="font-size:12px;font-weight:500;color:#fff;margin-bottom:2px">El guía como protagonista</div><div style="font-size:11px;color:#6B8F74;line-height:1.5">Un retrato del guía en su elemento. Esta foto tiene alta probabilidad de ser compartida con la mención "este señor sabe más de la Huasteca que nadie".</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     8. QUICK WINS
+══════════════════════════════════════════════════════════ -->
+<div class="view" id="v-wins">
+  <div class="hero">
+    <div class="hero-eyebrow">Plan de acción</div>
+    <div class="hero-title">30 días para<br><em>cambiar la percepción</em></div>
+    <div class="hero-sub">Acciones concretas ordenadas por impacto y facilidad de implementación. No todas cuestan dinero — la mayoría solo cuestan disciplina.</div>
+  </div>
+  <div class="page-body">
+
+    <div class="section">
+      <div class="section-label">Semana 1 — Fundamentos (costo: $0)</div>
+      <div class="grid-2">
+        <div class="win-card">
+          <div class="win-week">Día 1–2</div>
+          <div class="win-action">Reescribir la bio de Instagram y WhatsApp</div>
+          <div class="win-impact">Cambiar "Tours en la Huasteca Potosina" por "Guías locales que te muestran la Huasteca como nadie más puede." Impacto inmediato en primera impresión.</div>
+        </div>
+        <div class="win-card">
+          <div class="win-week">Día 2–3</div>
+          <div class="win-action">Mensaje de bienvenida del bot de WhatsApp</div>
+          <div class="win-impact">Reescribirlo siguiendo el tono de marca. Eliminar lista de precios y poner pregunta de descubrimiento: "¿Qué quieres experimentar?" antes de hablar de precios.</div>
+        </div>
+        <div class="win-card">
+          <div class="win-week">Día 3–4</div>
+          <div class="win-action">Elegir 3 fotos del archivo que sean cinematográficas</div>
+          <div class="win-impact">Fijar una en el perfil de Instagram. Usarla como portada de WhatsApp Business. Sin filtros adicionales — solo crop inteligente.</div>
+        </div>
+        <div class="win-card">
+          <div class="win-week">Día 5–7</div>
+          <div class="win-action">Crear hashtag propio y usarlo en todos los posts</div>
+          <div class="win-impact">#HuastecaProfunda o #SorprendenteTour en TODAS las publicaciones. Empezar a construir el archivo visual de la marca.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Semana 2 — Contenido (costo: 2-3 horas de fotografía)</div>
+      <div class="grid-2">
+        <div class="win-card">
+          <div class="win-week">Día 8–10</div>
+          <div class="win-action">Sesión fotográfica con un guía en su elemento natural</div>
+          <div class="win-impact">Un retrato editorial del guía estrella en la selva. Esta imagen sola diferencia la marca de todas las competidoras que solo muestran paisajes.</div>
+        </div>
+        <div class="win-card">
+          <div class="win-week">Día 10–12</div>
+          <div class="win-action">Publicar la historia del guía en Instagram</div>
+          <div class="win-impact">"Adrián lleva 12 años guiando en la Huasteca. Conoce el nombre de cada cascada." — Post con foto editorial. Engagement esperado: 3-5x el promedio habitual.</div>
+        </div>
+        <div class="win-card">
+          <div class="win-week">Día 12–14</div>
+          <div class="win-action">Crear "El dato que no sabías" como serie de contenido</div>
+          <div class="win-impact">Una publicación semanal con un dato extraordinario de la Huasteca. Educativo, viral, posiciona como expertos. Costo: 0.</div>
+        </div>
+        <div class="win-card">
+          <div class="win-week">Día 14</div>
+          <div class="win-action">Reescribir los nombres de los tours</div>
+          <div class="win-impact">En vez de "Tour a las Cascadas de Micos" → "Las Cascadas que Edward James veía desde su ventana". En vez de "Tour en RZR" → "La Huasteca Sin Asfalto". Los nombres venden antes de que nadie lea la descripción.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Semana 3–4 — Experiencia y conversión</div>
+      <div class="grid-2">
+        <div class="win-card">
+          <div class="win-week">Día 15–18</div>
+          <div class="win-action">Diseñar los 5 momentos fotográficos en cada tour</div>
+          <div class="win-impact">Entrenar a cada guía en los ángulos y momentos exactos donde ofrecer tomar la foto. Resultado: el cliente comparte en redes. Cada share = publicidad orgánica con credibilidad máxima.</div>
+        </div>
+        <div class="win-card">
+          <div class="win-week">Día 18–20</div>
+          <div class="win-action">Implementar mensaje post-tour del guía</div>
+          <div class="win-impact">24h después: mensaje personal del guía en WhatsApp. Tasa de respuesta con reseña en Google y TripAdvisor: sube entre 60-80% con mensajes personalizados vs. automatizados.</div>
+        </div>
+        <div class="win-card">
+          <div class="win-week">Día 20–25</div>
+          <div class="win-action">Rediseñar la página de inicio del sitio web</div>
+          <div class="win-impact">Solo cambiar: foto principal (cinematográfica), headline (de "Tours en Xilitla" a la Versión A o B del hero), y el CTA (de "Ver tours" a "Elige tu experiencia"). Sin tocar tecnología.</div>
+        </div>
+        <div class="win-card">
+          <div class="win-week">Día 25–30</div>
+          <div class="win-action">El objeto de despedida (costo: ~$30 MXN/cliente)</div>
+          <div class="win-impact">Una postal de la Huasteca con un texto escrito a mano corto del guía. Los clientes la fotografían y la publican. ROI: imposible de calcular pero siempre positivo.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">La métrica que realmente importa</div>
+      <div class="usp-box">
+        <div class="usp-label">KPI principal del reposicionamiento</div>
+        <div class="usp-text">"¿Cuántos clientes hablan de nosotros sin que les preguntemos?"</div>
+        <div class="usp-explain">Las reseñas espontáneas, los shares en Instagram sin que se los pidas, las recomendaciones de boca a boca — esos son los indicadores de que la marca está funcionando. Si en 30 días se ve un aumento en menciones orgánicas en redes, el reposicionamiento está funcionando. Si no, hay que revisar qué momento del journey está fallando.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     9. WEB MOCKUP
+══════════════════════════════════════════════════════════ -->
+<div class="view" id="v-web">
+  <div class="hero">
+    <div class="hero-eyebrow">Aplicación práctica</div>
+    <div class="hero-title">Cómo debería<br><em>verse el sitio web</em></div>
+    <div class="hero-sub">Un mockup funcional de cómo se vería la página de inicio con la nueva identidad. Cada decisión de diseño tiene una razón estratégica.</div>
+  </div>
+  <div class="page-body">
+
+    <div class="section">
+      <div class="section-label">Mockup de página de inicio</div>
+      <div class="web-mock">
+
+        <!-- Browser bar -->
+        <div class="mock-bar">
+          <div class="mock-dot" style="background:#FF5F57"></div>
+          <div class="mock-dot" style="background:#FFBD2E"></div>
+          <div class="mock-dot" style="background:#28C840"></div>
+          <div class="mock-url">sorprendentetour.com</div>
+        </div>
+
+        <!-- Hero -->
+        <div class="mock-hero">
+          <div class="mock-nav">
+            <div class="mock-logo">Sorprendente Tour</div>
+            <div class="mock-nav-items">
+              <div class="mock-nav-item">Recorridos</div>
+              <div class="mock-nav-item">Guías</div>
+              <div class="mock-nav-item">Galería</div>
+              <div class="mock-nav-item" style="color:var(--tierra);background:rgba(196,112,58,.15);padding:5px 12px;border-radius:6px">Reservar</div>
+            </div>
+          </div>
+          <div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--cascada);margin-bottom:10px">Xilitla, San Luis Potosí · México</div>
+          <div class="mock-h1">Hay lugares que se visitan.<br>La Huasteca se <em>vive</em>.</div>
+          <div class="mock-p">Tours guiados por personas que nacieron en la Huasteca Potosina. No somos intermediarios — somos la región.</div>
+          <div class="mock-btns">
+            <div class="mock-btn-p">Elige tu recorrido</div>
+            <div class="mock-btn-s">Ver la galería</div>
+          </div>
+          <div style="margin-top:28px;display:flex;gap:24px">
+            <div style="text-align:center">
+              <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--arena)">+800</div>
+              <div style="font-size:10px;color:#6B8F74;font-family:'Syne',sans-serif;letter-spacing:.06em;text-transform:uppercase">Viajeros en 2024</div>
+            </div>
+            <div style="text-align:center">
+              <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--arena)">4.9★</div>
+              <div style="font-size:10px;color:#6B8F74;font-family:'Syne',sans-serif;letter-spacing:.06em;text-transform:uppercase">TripAdvisor</div>
+            </div>
+            <div style="text-align:center">
+              <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--arena)">12+</div>
+              <div style="font-size:10px;color:#6B8F74;font-family:'Syne',sans-serif;letter-spacing:.06em;text-transform:uppercase">Años de experiencia</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tour cards -->
+        <div class="mock-cards">
+          <div class="mock-card">
+            <div class="mock-card-img" style="background:linear-gradient(160deg,#0F1A10,#2D6A4F)"></div>
+            <div class="mock-card-body">
+              <div class="mock-card-name">Sótano de las Golondrinas</div>
+              <div class="mock-card-desc">El sexto abismo más profundo del mundo. Al amanecer, miles de aves en espiral.</div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div class="mock-card-price">$1,800 MXN</div>
+                <div style="font-size:10px;background:var(--tierra);color:#fff;padding:3px 9px;border-radius:5px;font-family:'Syne',sans-serif;font-weight:700">Reservar</div>
+              </div>
+            </div>
+          </div>
+          <div class="mock-card">
+            <div class="mock-card-img" style="background:linear-gradient(160deg,#1B3A2A,#4CAF7A)"></div>
+            <div class="mock-card-body">
+              <div class="mock-card-name">Jardín Surrealista de Edward James</div>
+              <div class="mock-card-desc">El paraíso que un poeta inglés construyó en medio de la selva huasteca.</div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div class="mock-card-price">$1,200 MXN</div>
+                <div style="font-size:10px;background:var(--tierra);color:#fff;padding:3px 9px;border-radius:5px;font-family:'Syne',sans-serif;font-weight:700">Reservar</div>
+              </div>
+            </div>
+          </div>
+          <div class="mock-card">
+            <div class="mock-card-img" style="background:linear-gradient(160deg,#C4703A,#E8B87A)"></div>
+            <div class="mock-card-body">
+              <div class="mock-card-name">La Huasteca Sin Asfalto · RZR</div>
+              <div class="mock-card-desc">Brechas, selva y lodo. La manera más honesta de ver la región.</div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div class="mock-card-price">$2,400 MXN</div>
+                <div style="font-size:10px;background:var(--tierra);color:#fff;padding:3px 9px;border-radius:5px;font-family:'Syne',sans-serif;font-weight:700">Reservar</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonial strip -->
+        <div style="background:var(--hueso);padding:20px 28px;border-top:1px solid var(--borde)">
+          <div style="font-family:'Syne',sans-serif;font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--tinta3);margin-bottom:12px">Lo que dicen los que ya fueron</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:17px;font-style:italic;color:var(--tinta);line-height:1.4;margin-bottom:8px">"Llegué a Xilitla creyendo que iba a ver cascadas. Me fui habiendo entendido una región entera."</div>
+          <div style="font-size:11px;color:var(--tinta3)">— Patricia M., Ciudad de México · TripAdvisor ★★★★★</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Notas sobre cada decisión de diseño</div>
+      <div class="stack">
+        <div class="card">
+          <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--tierra);margin-bottom:4px">Por qué el hero es negro y no turquesa</div>
+          <div style="font-size:12px;color:var(--tinta2);line-height:1.65">El turquesa es el color de TODAS las agencias de turismo de playa y cascadas en México. Negro oscuro comunica algo distinto: seriedad, misterio, premium. Diferencia inmediata en una búsqueda de Google.</div>
+        </div>
+        <div class="card">
+          <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--tierra);margin-bottom:4px">Por qué los números en el hero</div>
+          <div style="font-size:12px;color:var(--tinta2);line-height:1.65">+800 viajeros, 4.9★, 12 años. Son anclas de credibilidad. El cliente que llega de una búsqueda necesita señales de confianza en los primeros 5 segundos. Sin estas cifras, la marca poética se puede sentir etérea.</div>
+        </div>
+        <div class="card">
+          <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--tierra);margin-bottom:4px">Por qué el CTA dice "Elige tu recorrido" y no "Reservar ahora"</div>
+          <div style="font-size:12px;color:var(--tinta2);line-height:1.65">"Reservar ahora" comunica transacción. "Elige tu recorrido" comunica personalización y decisión activa del cliente. En turismo de experiencias, la agencia del cliente en la decisión es parte del valor percibido.</div>
+        </div>
+        <div class="card">
+          <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--tierra);margin-bottom:4px">Por qué los nombres de tours son diferentes</div>
+          <div style="font-size:12px;color:var(--tinta2);line-height:1.65">"Tour a las Cascadas de Micos" no vende nada. "El Sótano de las Golondrinas — el sexto abismo más profundo del mundo" vende todo. El nombre de un producto es el primer copy que lee el cliente. Es más importante que la descripción.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="page-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">Sorprendente Tour</div>
+      <div class="footer-note" style="margin-top:4px">Propuesta de branding estratégico · 2025 · Para uso exclusivo del cliente</div>
+    </div>
+    <div class="footer-btns">
+      <button class="fbtn fbtn-g" onclick="show('diagnostico',document.querySelector('.nav-btn'))">Ver desde el inicio</button>
+      <button class="fbtn fbtn-t" onclick="window.print()">Imprimir / PDF</button>
+    </div>
+  </div>
+</footer>
+
+<script>
+function show(id, btn) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('v-' + id).classList.add('active');
+  if (btn) {
+    btn.classList.add('active');
+  } else {
+    const btns = document.querySelectorAll('.nav-btn');
+    const map = {diagnostico:0,posicionamiento:1,rutas:2,naming:3,visual:4,voz:5,experiencia:6,wins:7,web:8};
+    if (map[id] !== undefined) btns[map[id]].classList.add('active');
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+
+</body>
+</html>

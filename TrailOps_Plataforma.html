@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorprendente Tour · Plataforma de Reservas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root {
+  --green:        #1B3A2A;
+  --green-mid:    #2D6A4F;
+  --green-light:  #F4FAF5;
+  --green-pale:   #F4FAF5;
+  --green-border: #9BD0AE;
+  --ink:          #2D1B0E;
+  --ink-2:        #4a4038;
+  --ink-3:        #8a7e72;
+  --muted:        #8a7e72;
+  --surface:      #ffffff;
+  --surface-2:    #FAF8F2;
+  --surface-3:    #F0EBE0;
+  --border:       #E0D9CE;
+  --border-2:     #d7ccbe;
+  --red:          #dc2626;
+  --red-light:    #fee2e2;
+  --red-dark:     #991b1b;
+  --amber:        #C4703A;
+  --amber-light:  #FEF3E6;
+  --amber-dark:   #92400e;
+  --blue:         #4CAF7A;
+  --blue-light:   #ECF9F0;
+  --blue-dark:    #1B3A2A;
+  --shadow-sm:    0 1px 3px rgba(45,27,14,.06), 0 1px 2px rgba(45,27,14,.04);
+  --shadow:       0 4px 16px rgba(45,27,14,.08);
+  --shadow-lg:    0 12px 40px rgba(45,27,14,.16);
+  --radius:       10px;
+  --radius-lg:    16px;
+  --radius-xl:    24px;
+  font-size: 15px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: var(--surface-2); color: var(--ink); min-height: 100vh; }
+
+/* ── Topbar ── */
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: #0F1A10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; height: 56px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 2px 12px rgba(0,0,0,.2);
+}
+.topbar-brand { display: flex; align-items: center; gap: 10px; }
+.brand-mark {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: rgba(255,255,255,.08);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.brand-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; font-weight: 700; color: #E8B87A; letter-spacing: .1px;
+}
+.brand-name span { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 400; color: rgba(255,255,255,.45); }
+.topbar-nav { display: flex; gap: 2px; }
+.nav-tab {
+  font-family: 'Syne', sans-serif;
+  padding: 8px 16px; border-radius: 8px; font-size: 11px; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  border: none; cursor: pointer; transition: all .15s;
+  color: rgba(255,255,255,.55); background: transparent;
+}
+.nav-tab:hover { background: rgba(255,255,255,.1); color: rgba(255,255,255,.85); }
+.nav-tab.active { background: rgba(196,112,58,.22); color: #E8B87A; }
+.topbar-actions { display: flex; gap: 8px; align-items: center; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: var(--radius); font-size: 12px; font-weight: 700;
+  letter-spacing: .04em; text-transform: uppercase;
+  border: none; cursor: pointer; transition: all .15s; font-family: inherit;
+}
+.btn-ghost { background: rgba(255,255,255,.12); color: #fff; }
+.btn-ghost:hover { background: rgba(255,255,255,.2); }
+.btn-primary { background: #C4703A; color: #fff; }
+.btn-primary:hover { background: #d4834e; }
+.btn-danger { background: var(--red-light); color: var(--red-dark); }
+.btn-danger:hover { background: #fecaca; }
+.btn-green { background: #2D6A4F; color: #fff; }
+.btn-green:hover { background: #3a8a67; }
+.btn-outline {
+  background: transparent; color: var(--ink-2);
+  border: 1px solid var(--border-2);
+}
+.btn-outline:hover { background: #F5F1E8; }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn-icon { padding: 7px; }
+
+/* ── Views ── */
+.view { display: none; padding: 24px; max-width: 1400px; margin: 0 auto; }
+.view.active { display: block; }
+
+/* ── Page title ── */
+.page-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 20px; }
+.page-title { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 700; color: var(--ink); letter-spacing: -.1px; }
+.page-sub { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+/* ── Reservas table ── */
+.card {
+  background: var(--surface); border-radius: var(--radius-lg);
+  border: 1px solid var(--border); box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th {
+  background: var(--surface-3); padding: 10px 14px;
+  text-align: left; font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: .08em;
+  color: var(--ink-3); text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--green-pale); }
+tbody td { padding: 11px 14px; color: var(--ink); vertical-align: middle; }
+.td-mono { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--ink-3); }
+.td-bold { font-weight: 600; }
+.td-muted { color: var(--muted); font-size: 12px; }
+
+/* Status badges */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: 'Syne', sans-serif;
+  padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 700;
+  letter-spacing: .05em; text-transform: uppercase;
+}
+.badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
+.badge-green { background: var(--green-light); color: var(--green); }
+.badge-green::before { background: var(--green); }
+.badge-amber { background: var(--amber-light); color: var(--amber-dark); }
+.badge-amber::before { background: var(--amber); }
+.badge-red { background: var(--red-light); color: var(--red-dark); }
+.badge-red::before { background: var(--red); }
+
+/* Empty state */
+.empty-state { padding: 48px; text-align: center; color: var(--muted); }
+.empty-state svg { margin-bottom: 12px; opacity: .3; }
+.empty-state p { font-size: 14px; }
+
+/* ── Calendar ── */
+.cal-nav {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 12px 16px;
+  box-shadow: var(--shadow-sm);
+}
+.cal-nav-btn {
+  width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border-2);
+  background: var(--surface); cursor: pointer; display: flex; align-items: center;
+  justify-content: center; font-size: 16px; color: var(--ink-2);
+  transition: all .15s; flex-shrink: 0;
+}
+.cal-nav-btn:hover { background: var(--green-pale); border-color: var(--green-border); color: var(--green); }
+.cal-date-display {
+  flex: 1; text-align: center;
+}
+.cal-date-main { font-size: 17px; font-weight: 600; color: var(--ink); letter-spacing: -.3px; }
+.cal-date-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+.cal-grid-wrap { overflow-x: auto; }
+.cal-grid {
+  display: grid;
+  min-width: 640px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.cal-col-header {
+  background: #0F1A10; color: #fff;
+  padding: 10px 8px; text-align: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 11px; font-weight: 700; letter-spacing: .04em;
+  border-right: 1px solid rgba(255,255,255,.12);
+}
+.cal-col-header:last-child { border-right: none; }
+.cal-col-header .veh-type { font-weight: 400; opacity: .7; font-size: 10px; margin-top: 1px; }
+.cal-time-label {
+  background: var(--surface-3); padding: 0 10px;
+  display: flex; align-items: center; justify-content: flex-end;
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  color: var(--ink-3); border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  min-height: 48px; white-space: nowrap;
+}
+.cal-cell {
+  background: var(--surface); border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  min-height: 48px; padding: 4px 6px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background .12s; position: relative;
+}
+.cal-cell:last-child { border-right: none; }
+.cal-cell:hover { background: var(--green-pale); }
+.cal-cell .avail-text { font-size: 10px; color: var(--border-2); }
+.cal-block {
+  width: 100%; border-radius: 6px; padding: 5px 8px;
+  background: var(--green-light); border: 1px solid var(--green-border);
+  cursor: pointer; transition: opacity .12s;
+}
+.cal-block:hover { opacity: .8; }
+.cal-block-name { font-size: 11px; font-weight: 600; color: var(--green); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal-block-tour { font-size: 10px; color: var(--green-mid); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Multi-hour block spanning */
+.cal-cell-blocked {
+  background: var(--surface-3);
+  cursor: default;
+}
+.cal-cell-reserved {
+  background: var(--green-pale);
+}
+
+/* ── Modal ── */
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,.35);
+  display: flex; align-items: center; justify-content: center; z-index: 500;
+  padding: 20px;
+  opacity: 0; pointer-events: none; transition: opacity .18s;
+}
+.modal-backdrop.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--surface); border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg); width: 100%; max-width: 480px;
+  max-height: 90vh; overflow-y: auto;
+  transform: translateY(16px) scale(.98);
+  transition: transform .18s;
+}
+.modal-backdrop.open .modal { transform: none; }
+.modal-header {
+  padding: 20px 24px 0; display: flex; align-items: center; justify-content: space-between;
+}
+.modal-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 700; letter-spacing: 0; }
+.modal-close {
+  width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border);
+  background: transparent; cursor: pointer; font-size: 18px; color: var(--muted);
+  display: flex; align-items: center; justify-content: center; transition: all .12s;
+}
+.modal-close:hover { background: var(--red-light); color: var(--red); border-color: #fca5a5; }
+.modal-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+.modal-footer { padding: 0 24px 20px; display: flex; gap: 8px; justify-content: flex-end; }
+
+/* Form */
+.form-row { display: flex; flex-direction: column; gap: 5px; }
+.form-row label {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px; font-weight: 700; color: var(--ink-2); letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.form-row input, .form-row select {
+  padding: 9px 12px; border: 1px solid var(--border-2); border-radius: var(--radius);
+  font-size: 13px; font-family: inherit; color: var(--ink); background: var(--surface);
+  transition: border-color .12s, box-shadow .12s; outline: none;
+}
+.form-row input:focus, .form-row select:focus {
+  border-color: var(--green); box-shadow: 0 0 0 3px rgba(26,92,53,.1);
+}
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-info {
+  background: var(--green-pale); border: 1px solid var(--green-border);
+  border-radius: var(--radius); padding: 10px 12px;
+  font-size: 12px; color: var(--green); display: none;
+}
+.form-info.show { display: block; }
+.form-alert {
+  background: var(--red-light); border: 1px solid #fca5a5;
+  border-radius: var(--radius); padding: 10px 12px;
+  font-size: 12px; color: var(--red-dark); display: none;
+}
+.form-alert.show { display: block; }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(12px);
+  background: var(--ink); color: #fff; padding: 10px 20px;
+  border-radius: 20px; font-size: 13px; z-index: 600;
+  opacity: 0; transition: all .2s; pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Filters bar */
+.filters {
+  display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 16px;
+}
+.filter-input {
+  padding: 7px 12px; border: 1px solid var(--border-2); border-radius: var(--radius);
+  font-size: 13px; font-family: inherit; outline: none; background: var(--surface);
+  transition: border-color .12s;
+}
+.filter-input:focus { border-color: var(--green); }
+.filter-select { padding: 7px 12px; border: 1px solid var(--border-2); border-radius: var(--radius);
+  font-size: 13px; font-family: inherit; outline: none; background: var(--surface);
+  cursor: pointer;
+}
+
+/* Stats strip */
+.stats-strip {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px;
+  margin-bottom: 20px;
+}
+.stat-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 14px 16px;
+  box-shadow: var(--shadow-sm);
+}
+.stat-label { font-family: 'Syne', sans-serif; font-size: 10px; color: var(--muted); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 4px; }
+.stat-value { font-family: 'Cormorant Garamond', serif; font-size: 34px; font-weight: 700; color: var(--ink); letter-spacing: -.2px; line-height: 1; }
+.stat-sub { font-size: 11px; color: var(--ink-3); margin-top: 2px; }
+
+/* Dashboard */
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1.3fr .9fr;
+  gap: 14px;
+  margin-top: 14px;
+}
+.dash-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.dash-head {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  background: var(--surface-3);
+}
+.dash-body { padding: 8px 12px 12px; }
+.dash-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.dash-table th, .dash-table td {
+  padding: 9px 8px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+.dash-table th {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--ink-3);
+}
+.dash-table tr:last-child td { border-bottom: none; }
+.occ-list { display: flex; flex-direction: column; gap: 10px; }
+.occ-row { display: grid; grid-template-columns: 165px 1fr 52px; align-items: center; gap: 10px; }
+.occ-name { font-size: 11px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.occ-track {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--surface-3);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.occ-fill { height: 100%; border-radius: 999px; }
+.occ-green { background: #2D6A4F; }
+.occ-amber { background: #C4703A; }
+.occ-red { background: #dc2626; }
+.occ-pct { font-size: 11px; font-weight: 600; color: var(--ink-3); text-align: right; }
+
+@media (max-width: 980px) {
+  .dash-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<nav class="topbar">
+  <div class="topbar-brand">
+    <div class="brand-mark">🌿</div>
+    <div class="brand-name">Sorprendente Tour <span>· Plataforma de Reservas</span></div>
+  </div>
+  <div class="topbar-nav">
+    <button class="nav-tab" onclick="switchView('dashboard')">Dashboard</button>
+    <button class="nav-tab active" onclick="switchView('reservas')">Reservas</button>
+    <button class="nav-tab" onclick="switchView('calendario')">Calendario</button>
+  </div>
+  <div class="topbar-actions">
+    <button class="btn btn-ghost btn-sm" onclick="exportExcel()">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      Exportar Excel
+    </button>
+    <button class="btn btn-primary" onclick="openNewModal()">
+      + Nueva reserva
+    </button>
+  </div>
+</nav>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ══════════ VIEW: DASHBOARD ══════════ -->
+<div class="view" id="view-dashboard">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Dashboard</div>
+      <div class="page-sub" id="dash-subtitle">Resumen operativo automático</div>
+    </div>
+  </div>
+
+  <div class="stats-strip" id="dash-kpis"></div>
+
+  <div class="dash-grid">
+    <div class="dash-card">
+      <div class="dash-head">Reservas recientes</div>
+      <div class="dash-body">
+        <table class="dash-table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Cliente</th>
+              <th>Recorrido</th>
+              <th>Unidad</th>
+              <th>Precio</th>
+            </tr>
+          </thead>
+          <tbody id="dash-recent-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="dash-card">
+      <div class="dash-head">Ranking de recorridos</div>
+      <div class="dash-body">
+        <table class="dash-table">
+          <thead>
+            <tr>
+              <th>Recorrido</th>
+              <th>Reservas</th>
+              <th>Ingresos</th>
+            </tr>
+          </thead>
+          <tbody id="dash-routes-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="dash-card" style="margin-top:14px">
+    <div class="dash-head">Ocupación por vehículo (semáforo)</div>
+    <div class="dash-body">
+      <div class="occ-list" id="dash-occupancy"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ VIEW: RESERVAS ══════════ -->
+<div class="view active" id="view-reservas">
+
+  <div class="page-header">
+    <div>
+      <div class="page-title">Reservas</div>
+      <div class="page-sub" id="res-count-label">Cargando...</div>
+    </div>
+  </div>
+
+  <div class="stats-strip" id="stats-strip"></div>
+
+  <div class="filters">
+    <input class="filter-input" id="search-input" placeholder="Buscar cliente, vehículo..." oninput="renderReservations()" style="min-width:200px">
+    <select class="filter-select" id="filter-status" onchange="renderReservations()">
+      <option value="">Todos los estados</option>
+      <option value="Confirmada">Confirmada</option>
+      <option value="Pendiente">Pendiente</option>
+      <option value="Cancelada">Cancelada</option>
+    </select>
+    <select class="filter-select" id="filter-vehicle" onchange="renderReservations()">
+      <option value="">Todos los vehículos</option>
+    </select>
+    <input class="filter-input" id="filter-date" type="date" onchange="renderReservations()" title="Filtrar por fecha">
+  </div>
+
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Folio</th>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Vehículo</th>
+            <th>Recorrido</th>
+            <th>Horario</th>
+            <th>Personas</th>
+            <th>Precio</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="res-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ VIEW: CALENDARIO ══════════ -->
+<div class="view" id="view-calendario">
+
+  <div class="page-header">
+    <div>
+      <div class="page-title">Calendario</div>
+      <div class="page-sub">Disponibilidad por vehículo · 07:00 – 22:00</div>
+    </div>
+    <button class="btn btn-green" onclick="openNewModal()">+ Nueva reserva</button>
+  </div>
+
+  <div class="cal-nav">
+    <button class="cal-nav-btn" onclick="changeDay(-1)" title="Día anterior">&#8249;</button>
+    <div class="cal-date-display">
+      <div class="cal-date-main" id="cal-date-main"></div>
+      <div class="cal-date-sub" id="cal-date-sub"></div>
+    </div>
+    <button class="cal-nav-btn" onclick="changeDay(1)" title="Día siguiente">&#8250;</button>
+    <button class="btn btn-outline btn-sm" onclick="goToday()" style="margin-left:4px">Hoy</button>
+    <input type="date" id="cal-date-input" onchange="setCalDate(this.value)"
+      style="padding:6px 10px;border:1px solid var(--border-2);border-radius:var(--radius);font-size:13px;outline:none;margin-left:4px;font-family:inherit">
+  </div>
+
+  <div class="cal-grid-wrap">
+    <div class="cal-grid" id="cal-grid" style="grid-template-columns: 64px repeat(4, 1fr)"></div>
+  </div>
+</div>
+
+<!-- ══════════ MODAL: NEW / EDIT RESERVATION ══════════ -->
+<div class="modal-backdrop" id="modal-backdrop" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Nueva reserva</div>
+      <button class="modal-close" onclick="closeModalDirect()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-alert" id="form-alert"></div>
+      <div class="form-row">
+        <label>Tipo de recorrido</label>
+        <select id="f-tour" onchange="onTourChange()">
+          <option value="">Selecciona recorrido...</option>
+        </select>
+      </div>
+      <div class="form-info" id="tour-info"></div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label>Fecha</label>
+          <input type="date" id="f-date">
+        </div>
+        <div class="form-row">
+          <label>Hora inicio</label>
+          <select id="f-hour"></select>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label>Vehículo</label>
+          <select id="f-vehicle" onchange="onTourChange()">
+            <option value="">Auto-asignar</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Personas</label>
+          <input type="number" id="f-persons" min="1" max="10" value="2">
+        </div>
+      </div>
+      <div class="form-row">
+        <label>Nombre del cliente</label>
+        <input type="text" id="f-client" placeholder="Nombre completo">
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label>Teléfono (opcional)</label>
+          <input type="text" id="f-phone" placeholder="55 1234 5678">
+        </div>
+        <div class="form-row">
+          <label>Precio MXN</label>
+          <input type="number" id="f-price" placeholder="Automático">
+        </div>
+      </div>
+      <div class="form-row">
+        <label>Notas</label>
+        <input type="text" id="f-notes" placeholder="Notas opcionales...">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger btn-sm" id="btn-delete" onclick="deleteCurrentRes()" style="display:none;margin-right:auto">Eliminar</button>
+      <button class="btn btn-outline" onclick="closeModalDirect()">Cancelar</button>
+      <button class="btn btn-green" id="btn-save" onclick="saveReservation()">Confirmar reserva</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── DATA ──────────────────────────────────────────────────────────────────────
+const TOUR_DEFINITIONS = [
+  { id: 't1', name: 'Ruta Nanacatli', duration: 2 },
+  { id: 't2', name: 'Ruta Miradores', duration: 3 },
+  { id: 't3', name: 'Ruta Nacimiento', duration: 4 },
+  { id: 't4', name: 'Ruta Tranidad', duration: 4 },
+];
+
+const FLEET_MODELS = [
+  {
+    model: 'RZR 500',
+    capacityLabel: '2 adultos, 1 niño',
+    maxPassengers: 3,
+    units: 1,
+    prices: {
+      'Ruta Nanacatli': 1600,
+      'Ruta Miradores': 2600,
+      'Ruta Nacimiento': 3800,
+      'Ruta Tranidad': 3800,
+    },
+  },
+  {
+    model: 'RZR 900',
+    capacityLabel: '4 adultos',
+    maxPassengers: 4,
+    units: 1,
+    prices: {
+      'Ruta Nanacatli': 1900,
+      'Ruta Miradores': 2800,
+      'Ruta Nacimiento': 4500,
+      'Ruta Tranidad': 4500,
+    },
+  },
+  {
+    model: 'CAN-AM 800',
+    capacityLabel: '2 adultos',
+    maxPassengers: 2,
+    units: 1,
+    prices: {
+      'Ruta Nanacatli': 1600,
+      'Ruta Miradores': 2600,
+      'Ruta Nacimiento': 3800,
+      'Ruta Tranidad': 3800,
+    },
+  },
+  {
+    model: 'DEFENDER 6',
+    capacityLabel: '6 adultos',
+    maxPassengers: 6,
+    units: 5,
+    prices: {
+      'Ruta Nanacatli': 2200,
+      'Ruta Miradores': 3000,
+      'Ruta Nacimiento': 5000,
+      'Ruta Tranidad': 5000,
+    },
+  },
+  {
+    model: 'POLARIS PRO S',
+    capacityLabel: '4 adultos',
+    maxPassengers: 4,
+    units: 2,
+    prices: {
+      'Ruta Nanacatli': 3500,
+      'Ruta Miradores': 4500,
+      'Ruta Nacimiento': 7000,
+      'Ruta Tranidad': 7000,
+    },
+  },
+  {
+    model: 'MAVERIC X3',
+    capacityLabel: '4 adultos',
+    maxPassengers: 4,
+    units: 2,
+    prices: {
+      'Ruta Nanacatli': 2500,
+      'Ruta Miradores': 3500,
+      'Ruta Nacimiento': 5500,
+      'Ruta Tranidad': 5500,
+    },
+  },
+];
+
+const VEHICLES = FLEET_MODELS.flatMap((m, idx) =>
+  Array.from({ length: m.units }, (_, i) => ({
+    id: `v${idx + 1}-${i + 1}`,
+    name: `${m.model}-${String(i + 1).padStart(2,'0')}`,
+    type: m.model,
+    capacityLabel: m.capacityLabel,
+    maxPassengers: m.maxPassengers,
+    prices: m.prices,
+  }))
+);
+
+const TOURS = TOUR_DEFINITIONS;
+
+const HOURS = Array.from({ length: 16 }, (_, i) => {
+  const h = i + 7;
+  return `${String(h).padStart(2,'0')}:00`;
+}); // 07:00 – 22:00
+
+let reservations = JSON.parse(localStorage.getItem('trailops_reservations') || '[]');
+
+// Seed sample data if empty
+if (!reservations.length) {
+  const today = new Date();
+  const fmt = d => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  };
+  const d0 = fmt(today);
+  const d1 = fmt(new Date(today.getTime() + 86400000));
+  reservations = [
+    { id: 'r1', date: d0, client: 'Carlos Hernández', vehicle: 'RZR 900-01',     tour: 'Ruta Miradores',  hour: '09:00', persons: 4, price: 2800, status: 'Confirmada', phone: '5551234567', notes: '' },
+    { id: 'r2', date: d0, client: 'Ana López',        vehicle: 'RZR 500-01',     tour: 'Ruta Nanacatli',  hour: '08:00', persons: 3, price: 1600, status: 'Confirmada', phone: '5557654321', notes: '' },
+    { id: 'r3', date: d0, client: 'Pedro Martínez',   vehicle: 'CAN-AM 800-01',  tour: 'Ruta Nacimiento', hour: '11:00', persons: 2, price: 3800, status: 'Pendiente',  phone: '',           notes: '' },
+    { id: 'r4', date: d1, client: 'Sofía Ruiz',       vehicle: 'DEFENDER 6-01',  tour: 'Ruta Miradores',  hour: '14:00', persons: 6, price: 3000, status: 'Confirmada', phone: '',           notes: '' },
+    { id: 'r5', date: d1, client: 'Miguel Torres',    vehicle: 'MAVERIC X3-01',  tour: 'Ruta Nanacatli',  hour: '10:00', persons: 4, price: 2500, status: 'Confirmada', phone: '',           notes: '' },
+  ];
+  saveData();
+}
+
+function saveData() {
+  localStorage.setItem('trailops_reservations', JSON.stringify(reservations));
+}
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+const genId = () => 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2,5);
+const getVehicle = name => VEHICLES.find(v => v.name === name);
+const getTour = name => TOURS.find(t => t.name === name);
+const dateKey = d => {
+  if (!(d instanceof Date)) return d;
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+};
+
+function getRoutePrice(vehicleName, tourName) {
+  const vehicle = getVehicle(vehicleName);
+  return Number(vehicle?.prices?.[tourName] || 0);
+}
+
+function getMinRoutePrice(tourName) {
+  const prices = VEHICLES
+    .map(v => Number(v.prices?.[tourName] || 0))
+    .filter(Boolean);
+  return prices.length ? Math.min(...prices) : 0;
+}
+
+function migrateDeprecatedVehicles() {
+  let changed = false;
+  reservations = reservations.map(r => {
+    if (r.vehicle === 'DEFENDER 6+2-01') {
+      changed = true;
+      const fallbackVehicle = 'DEFENDER 6-01';
+      const fallbackPrice = getRoutePrice(fallbackVehicle, r.tour) || Number(r.price) || 0;
+      return { ...r, vehicle: fallbackVehicle, price: fallbackPrice };
+    }
+    return r;
+  });
+  if (changed) saveData();
+}
+
+migrateDeprecatedVehicles();
+
+function fmtDateLong(dateStr) {
+  const [y,m,d] = dateStr.split('-').map(Number);
+  const dt = new Date(y, m-1, d);
+  const days = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  return `${days[dt.getDay()]} ${d} de ${months[m-1]} de ${y}`;
+}
+
+function fmtDateShort(dateStr) {
+  const [y,m,d] = dateStr.split('-').map(Number);
+  const dt = new Date(y, m-1, d);
+  const days = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  return `${days[dt.getDay()]} ${String(d).padStart(2,'0')}/${String(m).padStart(2,'0')}`;
+}
+
+function hourEnd(startHour, durationH) {
+  const [h, m] = startHour.split(':').map(Number);
+  const endH = h + durationH;
+  return `${String(endH).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+}
+
+function hasConflict(vehicleName, date, startHour, durationH, excludeId = null) {
+  const startMin = timeToMin(startHour);
+  const endMin = startMin + durationH * 60;
+  return reservations.some(r => {
+    if (r.id === excludeId) return false;
+    if (r.vehicle !== vehicleName || r.date !== date) return false;
+    if (r.status === 'Cancelada') return false;
+    const tour = getTour(r.tour);
+    if (!tour) return false;
+    const rStart = timeToMin(r.hour);
+    const rEnd = rStart + tour.duration * 60;
+    return startMin < rEnd && endMin > rStart;
+  });
+}
+
+function timeToMin(t) {
+  const [h, m] = t.split(':').map(Number);
+  return h * 60 + m;
+}
+
+function autoAssign(date, startHour, duration, excludeId, minCapacity = 1) {
+  return VEHICLES.find(v =>
+    Number(v.maxPassengers || 0) >= Number(minCapacity || 1) &&
+    !hasConflict(v.name, date, startHour, duration, excludeId)
+  ) || null;
+}
+
+function showToast(msg, duration = 2000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+function showAlert(msg) {
+  const a = document.getElementById('form-alert');
+  a.textContent = msg;
+  a.classList.add('show');
+}
+function clearAlert() {
+  document.getElementById('form-alert').classList.remove('show');
+}
+
+// ─── VIEW SWITCHING ────────────────────────────────────────────────────────────
+function switchView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  const idx = ['dashboard','reservas','calendario'].indexOf(name);
+  document.querySelectorAll('.nav-tab')[idx].classList.add('active');
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'reservas') renderReservations();
+  if (name === 'calendario') renderCalendar();
+}
+
+function renderDashboard() {
+  const active = reservations.filter(r => r.status !== 'Cancelada');
+  const confirmed = reservations.filter(r => r.status === 'Confirmada');
+  const totalIngresos = confirmed.reduce((s, r) => s + (Number(r.price) || 0), 0);
+  const ticket = confirmed.length ? Math.round(totalIngresos / confirmed.length) : 0;
+  const vehActivos = new Set(active.map(r => r.vehicle)).size;
+
+  const dashKpis = document.getElementById('dash-kpis');
+  dashKpis.innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">Total reservas</div>
+      <div class="stat-value">${active.length}</div>
+      <div class="stat-sub">activas</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Ingresos</div>
+      <div class="stat-value">$${totalIngresos.toLocaleString()}</div>
+      <div class="stat-sub">confirmadas</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Ticket promedio</div>
+      <div class="stat-value">$${ticket.toLocaleString()}</div>
+      <div class="stat-sub">por reserva</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Vehículos activos</div>
+      <div class="stat-value">${vehActivos}</div>
+      <div class="stat-sub">de ${VEHICLES.length}</div>
+    </div>
+  `;
+
+  const sortedRecent = [...active].sort((a, b) => {
+    const ka = `${a.date} ${a.hour}`;
+    const kb = `${b.date} ${b.hour}`;
+    return ka < kb ? 1 : -1;
+  }).slice(0, 8);
+
+  const recentBody = document.getElementById('dash-recent-tbody');
+  recentBody.innerHTML = sortedRecent.length
+    ? sortedRecent.map(r => `
+      <tr>
+        <td>${fmtDateShort(r.date)} ${r.hour}</td>
+        <td>${r.client}</td>
+        <td>${r.tour}</td>
+        <td>${r.vehicle}</td>
+        <td>$${Number(r.price || 0).toLocaleString()}</td>
+      </tr>
+    `).join('')
+    : '<tr><td colspan="5" class="td-muted">Sin reservas registradas</td></tr>';
+
+  const byTour = {};
+  active.forEach(r => {
+    if (!byTour[r.tour]) byTour[r.tour] = { count: 0, revenue: 0 };
+    byTour[r.tour].count += 1;
+    byTour[r.tour].revenue += Number(r.price || 0);
+  });
+  const routeRows = Object.entries(byTour)
+    .sort((a, b) => b[1].count - a[1].count || b[1].revenue - a[1].revenue)
+    .slice(0, 8);
+
+  const routesBody = document.getElementById('dash-routes-tbody');
+  routesBody.innerHTML = routeRows.length
+    ? routeRows.map(([tour, meta]) => `
+      <tr>
+        <td>${tour}</td>
+        <td>${meta.count}</td>
+        <td>$${Number(meta.revenue).toLocaleString()}</td>
+      </tr>
+    `).join('')
+    : '<tr><td colspan="3" class="td-muted">Sin datos de recorridos</td></tr>';
+
+  const activeDates = [...new Set(active.map(r => r.date))];
+  const totalHoursBase = Math.max(activeDates.length, 1) * HOURS.length;
+  const occupancy = VEHICLES.map(v => {
+    const reservedH = active
+      .filter(r => r.vehicle === v.name)
+      .reduce((sum, r) => sum + (getTour(r.tour)?.duration || 0), 0);
+    const pct = Math.min(100, Math.round((reservedH / totalHoursBase) * 100));
+    const color = pct >= 70 ? 'occ-green' : (pct >= 40 ? 'occ-amber' : 'occ-red');
+    return { name: v.name, pct, color };
+  }).sort((a, b) => b.pct - a.pct);
+
+  const occNode = document.getElementById('dash-occupancy');
+  occNode.innerHTML = occupancy.map(o => `
+    <div class="occ-row">
+      <div class="occ-name">${o.name}</div>
+      <div class="occ-track"><div class="occ-fill ${o.color}" style="width:${o.pct}%"></div></div>
+      <div class="occ-pct">${o.pct}%</div>
+    </div>
+  `).join('');
+
+  document.getElementById('dash-subtitle').textContent = `Actualizado automáticamente · ${active.length} reservas vigentes`;
+}
+
+// ─── STATS STRIP ──────────────────────────────────────────────────────────────
+function renderStats() {
+  const confirmed = reservations.filter(r => r.status === 'Confirmada');
+  const total_rev = confirmed.reduce((s, r) => s + (Number(r.price) || 0), 0);
+  const avg = confirmed.length ? Math.round(total_rev / confirmed.length) : 0;
+  const today = dateKey(new Date());
+  const today_count = confirmed.filter(r => r.date === today).length;
+
+  document.getElementById('stats-strip').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">Reservas totales</div>
+      <div class="stat-value">${reservations.filter(r => r.status !== 'Cancelada').length}</div>
+      <div class="stat-sub">activas</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Ingresos confirmados</div>
+      <div class="stat-value">$${total_rev.toLocaleString()}</div>
+      <div class="stat-sub">MXN</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Ticket promedio</div>
+      <div class="stat-value">$${avg.toLocaleString()}</div>
+      <div class="stat-sub">por reserva</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Reservas hoy</div>
+      <div class="stat-value">${today_count}</div>
+      <div class="stat-sub">${today}</div>
+    </div>
+  `;
+}
+
+// ─── RESERVATIONS VIEW ────────────────────────────────────────────────────────
+function renderReservations() {
+  renderStats();
+  const search = document.getElementById('search-input').value.toLowerCase();
+  const filterStatus = document.getElementById('filter-status').value;
+  const filterVehicle = document.getElementById('filter-vehicle').value;
+  const filterDate = document.getElementById('filter-date').value;
+
+  // Populate vehicle filter
+  const vf = document.getElementById('filter-vehicle');
+  const prev = vf.value;
+  vf.innerHTML = '<option value="">Todos los vehículos</option>' +
+    VEHICLES.map(v => `<option value="${v.name}" ${prev===v.name?'selected':''}>${v.name}</option>`).join('');
+
+  let filtered = [...reservations].sort((a, b) => {
+    if (a.date !== b.date) return a.date < b.date ? -1 : 1;
+    return a.hour < b.hour ? -1 : 1;
+  });
+
+  if (search) filtered = filtered.filter(r =>
+    r.client.toLowerCase().includes(search) ||
+    r.vehicle.toLowerCase().includes(search) ||
+    r.tour.toLowerCase().includes(search));
+  if (filterStatus) filtered = filtered.filter(r => r.status === filterStatus);
+  if (filterVehicle) filtered = filtered.filter(r => r.vehicle === filterVehicle);
+  if (filterDate) filtered = filtered.filter(r => r.date === filterDate);
+
+  document.getElementById('res-count-label').textContent =
+    `${filtered.length} reserva${filtered.length !== 1 ? 's' : ''} encontradas`;
+
+  const tbody = document.getElementById('res-tbody');
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="10">
+      <div class="empty-state">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <p>No se encontraron reservas</p>
+      </div>
+    </td></tr>`;
+    return;
+  }
+
+  const statusBadge = s => {
+    const map = { Confirmada: 'green', Pendiente: 'amber', Cancelada: 'red' };
+    return `<span class="badge badge-${map[s]||'amber'}">${s}</span>`;
+  };
+
+  tbody.innerHTML = filtered.map(r => {
+    const tour = getTour(r.tour);
+    const end = tour ? hourEnd(r.hour, tour.duration) : '?';
+    const folio = 'RES-' + r.id.slice(-4).toUpperCase();
+    return `<tr>
+      <td class="td-mono">${folio}</td>
+      <td>${fmtDateShort(r.date)}</td>
+      <td class="td-bold">${r.client}</td>
+      <td><span style="font-family:'DM Mono',monospace;font-size:12px;background:var(--surface-3);padding:2px 7px;border-radius:5px">${r.vehicle}</span></td>
+      <td>${r.tour}</td>
+      <td class="td-mono">${r.hour}–${end}</td>
+      <td class="td-muted">${r.persons}p</td>
+      <td style="font-weight:600;color:var(--green)">$${Number(r.price).toLocaleString()}</td>
+      <td>${statusBadge(r.status)}</td>
+      <td>
+        <button class="btn btn-outline btn-sm btn-icon" onclick="openEditModal('${r.id}')" title="Editar" style="margin-right:4px">✏️</button>
+        <button class="btn btn-danger btn-sm btn-icon" onclick="confirmDelete('${r.id}')" title="Eliminar">✕</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── CALENDAR VIEW ────────────────────────────────────────────────────────────
+let calDate = dateKey(new Date());
+
+function renderCalendar() {
+  // Update nav
+  document.getElementById('cal-date-main').textContent = fmtDateLong(calDate);
+  document.getElementById('cal-date-sub').textContent =
+    `${reservations.filter(r => r.date === calDate && r.status !== 'Cancelada').length} reservas este día`;
+  document.getElementById('cal-date-input').value = calDate;
+
+  const grid = document.getElementById('cal-grid');
+  grid.style.gridTemplateColumns = `64px repeat(${VEHICLES.length}, 1fr)`;
+  grid.innerHTML = '';
+
+  // Header row: empty time cell + vehicle cols
+  const timeHdr = document.createElement('div');
+  timeHdr.className = 'cal-col-header';
+  timeHdr.style.background = 'var(--green)';
+  timeHdr.textContent = '';
+  grid.appendChild(timeHdr);
+
+  VEHICLES.forEach(v => {
+    const hdr = document.createElement('div');
+    hdr.className = 'cal-col-header';
+    hdr.innerHTML = `<div>${v.name}</div><div class="veh-type">${v.type}</div>`;
+    grid.appendChild(hdr);
+  });
+
+  // Pre-compute which (vehicle, hour) slots are occupied
+  // Each reservation occupies startHour to startHour+duration
+  const occupied = {}; // key: `${vehicle}_${hour}` → reservation
+
+  reservations.filter(r => r.date === calDate && r.status !== 'Cancelada').forEach(r => {
+    const tour = getTour(r.tour);
+    if (!tour) return;
+    const startIdx = HOURS.indexOf(r.hour);
+    if (startIdx === -1) return;
+    for (let i = 0; i < tour.duration; i++) {
+      const hIdx = startIdx + i;
+      if (hIdx < HOURS.length) {
+        const key = `${r.vehicle}_${HOURS[hIdx]}`;
+        occupied[key] = { res: r, isStart: i === 0, duration: tour.duration };
+      }
+    }
+  });
+
+  // Hour rows
+  HOURS.forEach(hour => {
+    // Time label
+    const tl = document.createElement('div');
+    tl.className = 'cal-time-label';
+    tl.textContent = hour;
+    grid.appendChild(tl);
+
+    VEHICLES.forEach(v => {
+      const key = `${v.name}_${hour}`;
+      const occ = occupied[key];
+      const cell = document.createElement('div');
+      cell.className = 'cal-cell';
+
+      if (occ) {
+        cell.classList.add('cal-cell-reserved');
+        if (occ.isStart) {
+          const block = document.createElement('div');
+          block.className = 'cal-block';
+          block.innerHTML = `
+            <div class="cal-block-name">${occ.res.client}</div>
+            <div class="cal-block-tour">${occ.res.tour}</div>
+          `;
+          block.onclick = () => openEditModal(occ.res.id);
+          cell.appendChild(block);
+        } else {
+          cell.style.background = '#e8f8ef';
+          cell.style.borderTop = '1px dashed var(--green-border)';
+        }
+      } else {
+        const hint = document.createElement('span');
+        hint.className = 'avail-text';
+        hint.textContent = '+ reservar';
+        cell.appendChild(hint);
+        cell.onclick = () => openNewModal(v.name, calDate, hour);
+      }
+
+      grid.appendChild(cell);
+    });
+  });
+}
+
+function changeDay(delta) {
+  const [y, m, d] = calDate.split('-').map(Number);
+  const dt = new Date(y, m - 1, d + delta);
+  calDate = dateKey(dt);
+  renderCalendar();
+}
+
+function goToday() {
+  calDate = dateKey(new Date());
+  renderCalendar();
+}
+
+function setCalDate(val) {
+  if (val) { calDate = val; renderCalendar(); }
+}
+
+// ─── MODAL ────────────────────────────────────────────────────────────────────
+let editingId = null;
+
+function populateSelects() {
+  const tSel = document.getElementById('f-tour');
+  tSel.innerHTML = '<option value="">Selecciona recorrido...</option>' +
+    TOURS.map(t => `<option value="${t.name}">${t.name} — ${t.duration}h · desde $${getMinRoutePrice(t.name).toLocaleString()}</option>`).join('');
+
+  const vSel = document.getElementById('f-vehicle');
+  vSel.innerHTML = '<option value="">Auto-asignar</option>' +
+    VEHICLES.map(v => `<option value="${v.name}">${v.name} · ${v.type}</option>`).join('');
+
+  const hSel = document.getElementById('f-hour');
+  hSel.innerHTML = HOURS.map(h => `<option value="${h}">${h}</option>`).join('');
+}
+
+function openNewModal(vehiclePreset = null, datePreset = null, hourPreset = null) {
+  editingId = null;
+  populateSelects();
+  document.getElementById('f-date').value = datePreset || calDate || dateKey(new Date());
+  document.getElementById('f-hour').value = hourPreset || '09:00';
+  if (vehiclePreset) document.getElementById('f-vehicle').value = vehiclePreset;
+  document.getElementById('f-client').value = '';
+  document.getElementById('f-phone').value = '';
+  document.getElementById('f-price').value = '';
+  document.getElementById('f-persons').value = '2';
+  document.getElementById('f-notes').value = '';
+  document.getElementById('f-tour').value = '';
+  document.getElementById('tour-info').classList.remove('show');
+  document.getElementById('modal-title').textContent = 'Nueva reserva';
+  document.getElementById('btn-save').textContent = 'Confirmar reserva';
+  document.getElementById('btn-delete').style.display = 'none';
+  clearAlert();
+  document.getElementById('modal-backdrop').classList.add('open');
+}
+
+function openEditModal(id) {
+  const r = reservations.find(x => x.id === id);
+  if (!r) return;
+  editingId = id;
+  populateSelects();
+  document.getElementById('f-date').value = r.date;
+  document.getElementById('f-hour').value = r.hour;
+  document.getElementById('f-vehicle').value = r.vehicle;
+  document.getElementById('f-tour').value = r.tour;
+  document.getElementById('f-client').value = r.client;
+  document.getElementById('f-phone').value = r.phone || '';
+  document.getElementById('f-price').value = r.price;
+  document.getElementById('f-persons').value = r.persons;
+  document.getElementById('f-notes').value = r.notes || '';
+  onTourChange();
+  document.getElementById('modal-title').textContent = 'Editar reserva';
+  document.getElementById('btn-save').textContent = 'Guardar cambios';
+  document.getElementById('btn-delete').style.display = 'inline-flex';
+  clearAlert();
+  document.getElementById('modal-backdrop').classList.add('open');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modal-backdrop')) closeModalDirect();
+}
+function closeModalDirect() {
+  document.getElementById('modal-backdrop').classList.remove('open');
+}
+
+function onTourChange() {
+  const name = document.getElementById('f-tour').value;
+  const vehicleName = document.getElementById('f-vehicle').value;
+  const tour = getTour(name);
+  const box = document.getElementById('tour-info');
+  const priceInput = document.getElementById('f-price');
+  if (tour) {
+    const selectedVehicle = getVehicle(vehicleName);
+    const capText = selectedVehicle ? selectedVehicle.capacityLabel : 'según unidad';
+    const routePrice = selectedVehicle
+      ? getRoutePrice(vehicleName, name)
+      : getMinRoutePrice(name);
+
+    box.textContent = `⏱ ${tour.duration}h · 👥 ${capText} · 💰 $${Number(routePrice).toLocaleString()} MXN`;
+    box.classList.add('show');
+    priceInput.value = routePrice || '';
+  } else {
+    box.classList.remove('show');
+    priceInput.value = '';
+  }
+}
+
+function saveReservation() {
+  clearAlert();
+  const tourName  = document.getElementById('f-tour').value;
+  const date      = document.getElementById('f-date').value;
+  const hour      = document.getElementById('f-hour').value;
+  let vehicle     = document.getElementById('f-vehicle').value;
+  const client    = document.getElementById('f-client').value.trim();
+  const persons   = parseInt(document.getElementById('f-persons').value) || 1;
+  const phone     = document.getElementById('f-phone').value.trim();
+  const notes     = document.getElementById('f-notes').value.trim();
+
+  if (!tourName) return showAlert('Selecciona un tipo de recorrido.');
+  if (!date)     return showAlert('Selecciona una fecha.');
+  if (!client)   return showAlert('Ingresa el nombre del cliente.');
+
+  const tour = getTour(tourName);
+
+  if (!vehicle) {
+    const assigned = autoAssign(date, hour, tour.duration, editingId, persons);
+    if (!assigned) return showAlert('No hay vehículos disponibles con esa capacidad en ese horario. Elige otro horario o fecha.');
+    vehicle = assigned.name;
+  } else {
+    const selectedVehicle = getVehicle(vehicle);
+    if (!selectedVehicle)
+      return showAlert('La unidad seleccionada ya no está disponible. Elige otra unidad.');
+
+    if (persons > Number(selectedVehicle?.maxPassengers || 0))
+      return showAlert(`La unidad ${vehicle} admite máximo ${selectedVehicle?.maxPassengers || 0} personas.`);
+
+    if (hasConflict(vehicle, date, hour, tour.duration, editingId))
+      return showAlert(`${vehicle} ya tiene una reserva en ese horario. Elige otra hora o vehículo.`);
+  }
+
+  const price = getRoutePrice(vehicle, tourName);
+  if (!price)
+    return showAlert('No existe tarifa configurada para esa combinación de unidad y recorrido.');
+  document.getElementById('f-price').value = price;
+
+  if (editingId) {
+    const idx = reservations.findIndex(r => r.id === editingId);
+    reservations[idx] = { ...reservations[idx], date, hour, vehicle, client, persons, price, phone, notes, tour: tourName, status: reservations[idx].status };
+    showToast(`Reserva de ${client} actualizada`);
+  } else {
+    reservations.push({ id: genId(), date, client, vehicle, tour: tourName, hour, persons, price, phone, notes, status: 'Confirmada' });
+    showToast(`Reserva confirmada · ${vehicle} · ${hour}`);
+  }
+
+  saveData();
+  closeModalDirect();
+  renderReservations();
+  renderCalendar();
+  renderDashboard();
+}
+
+function confirmDelete(id) {
+  const r = reservations.find(x => x.id === id);
+  if (!r) return;
+  if (confirm(`¿Eliminar la reserva de ${r.client}?`)) {
+    reservations = reservations.filter(x => x.id !== id);
+    saveData();
+    showToast('Reserva eliminada');
+    renderReservations();
+    renderCalendar();
+    renderDashboard();
+  }
+}
+
+function deleteCurrentRes() {
+  if (!editingId) return;
+  const r = reservations.find(x => x.id === editingId);
+  if (!r) return;
+  if (confirm(`¿Eliminar la reserva de ${r.client}?`)) {
+    reservations = reservations.filter(x => x.id !== editingId);
+    saveData();
+    closeModalDirect();
+    showToast('Reserva eliminada');
+    renderReservations();
+    renderCalendar();
+    renderDashboard();
+  }
+}
+
+// ─── EXCEL EXPORT ─────────────────────────────────────────────────────────────
+function exportExcel() {
+  const wb = XLSX.utils.book_new();
+
+  // Sheet 1: Reservas
+  const headers = ['Folio','Fecha','Cliente','Vehículo','Recorrido','Hora inicio','Hora fin','Personas','Precio MXN','Estado','Teléfono','Notas'];
+  const rows = reservations.map((r, i) => {
+    const tour = getTour(r.tour);
+    const end = tour ? hourEnd(r.hour, tour.duration) : '';
+    return [
+      'RES-' + r.id.slice(-4).toUpperCase(),
+      r.date, r.client, r.vehicle, r.tour, r.hour, end,
+      r.persons, r.price, r.status, r.phone || '', r.notes || ''
+    ];
+  });
+  const wsData = [headers, ...rows];
+  const ws1 = XLSX.utils.aoa_to_sheet(wsData);
+  ws1['!cols'] = [9,12,20,12,20,12,12,10,13,14,14,24].map(w => ({ wch: w }));
+  XLSX.utils.book_append_sheet(wb, ws1, 'Reservas');
+
+  // Sheet 2: Calendario (today)
+  const calHeaders = ['Hora', ...VEHICLES.map(v => v.name)];
+  const calRows = HOURS.map(hour => {
+    const row = [hour];
+    VEHICLES.forEach(v => {
+      const r = reservations.find(res =>
+        res.date === calDate &&
+        res.vehicle === v.name &&
+        (() => {
+          const t = getTour(res.tour);
+          if (!t) return false;
+          const start = timeToMin(res.hour);
+          const end = start + t.duration * 60;
+          const current = timeToMin(hour);
+          return current >= start && current < end;
+        })() &&
+        res.status !== 'Cancelada'
+      );
+      row.push(r ? `${r.client} · ${r.tour}` : 'Disponible');
+    });
+    return row;
+  });
+  const ws2 = XLSX.utils.aoa_to_sheet([calHeaders, ...calRows]);
+  ws2['!cols'] = [10, 26, 26, 26, 26].map(w => ({ wch: w }));
+  XLSX.utils.book_append_sheet(wb, ws2, 'Calendario ' + calDate);
+
+  XLSX.writeFile(wb, `SorprendenteTour_${dateKey(new Date()).replace(/-/g,'')}.xlsx`);
+  showToast('Excel exportado correctamente');
+}
+
+// ─── INIT ──────────────────────────────────────────────────────────────────────
+renderReservations();
+renderCalendar();
+renderDashboard();
+</script>
+</body>
+</html>

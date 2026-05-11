@@ -1,0 +1,17 @@
+{
+  "name": "axilitla4x4-dashboard",
+  "version": "1.0.0",
+  "description": "Panel de reservas — Axilitla 4x4",
+  "main": "admin.js",
+  "scripts": {
+    "start": "node admin.js",
+    "dev": "node admin.js"
+  },
+  "dependencies": {
+    "@vercel/kv": "^2.0.0",
+    "cookie-session": "^2.1.0",
+    "dotenv": "^16.4.5",
+    "express": "^5.2.1",
+    "pdfkit": "^0.18.0"
+  }
+}

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Axilitla 4x4 — Panel</title>
+  <style>
+    :root {
+      --bg:      #0d1117;
+      --card:    #161b22;
+      --card2:   #21262d;
+      --border:  #30363d;
+      --green:   #22c55e;
+      --green2:  #16a34a;
+      --amber:   #f59e0b;
+      --red:     #ef4444;
+      --blue:    #3b82f6;
+      --text:    #e6edf3;
+      --muted:   #8b949e;
+      --radius:  8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; }
+
+    /* ── Login ── */
+    #loginPage {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #0d1117 0%, #0f2d0f 100%);
+    }
+    .login-box {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 40px 36px; width: 360px;
+    }
+    .login-box h1 { color: var(--green); font-size: 22px; margin-bottom: 4px; }
+    .login-box p  { color: var(--muted); margin-bottom: 28px; font-size: 13px; }
+    .login-box label { display: block; margin-bottom: 4px; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+    .login-box input {
+      width: 100%; padding: 10px 12px; background: var(--card2); border: 1px solid var(--border);
+      border-radius: var(--radius); color: var(--text); font-size: 14px; margin-bottom: 16px;
+    }
+    .login-box input:focus { outline: none; border-color: var(--green); }
+    .btn-login {
+      width: 100%; padding: 11px; background: var(--green2); color: white; border: none;
+      border-radius: var(--radius); font-size: 14px; font-weight: 600; cursor: pointer;
+    }
+    .btn-login:hover { background: var(--green); }
+    #loginError { color: var(--red); font-size: 13px; margin-top: 12px; text-align: center; min-height: 18px; }
+
+    /* ── App layout ── */
+    #appPage { display: none; }
+    header {
+      background: var(--card); border-bottom: 1px solid var(--border);
+      padding: 0 24px; height: 56px; display: flex; align-items: center; gap: 12px;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .logo { color: var(--green); font-weight: 700; font-size: 16px; flex: 1; }
+    .logo span { color: var(--muted); font-weight: 400; font-size: 12px; margin-left: 8px; }
+    .user-badge { background: var(--card2); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; font-size: 13px; }
+    .btn-logout { background: none; border: 1px solid var(--border); color: var(--muted); padding: 5px 12px; border-radius: var(--radius); cursor: pointer; font-size: 13px; }
+    .btn-logout:hover { border-color: var(--red); color: var(--red); }
+
+    main { padding: 24px; max-width: 1200px; margin: 0 auto; }
+
+    /* ── Stats ── */
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    .stat-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 16px 20px;
+    }
+    .stat-label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+    .stat-value { font-size: 28px; font-weight: 700; margin-top: 4px; }
+    .stat-card.total    .stat-value { color: var(--text); }
+    .stat-card.pending  .stat-value { color: var(--amber); }
+    .stat-card.confirmed .stat-value { color: var(--green); }
+    .stat-card.cancelled .stat-value { color: var(--red); }
+
+    /* ── Tabs ── */
+    .tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 0; }
+    .tab {
+      background: none; border: none; color: var(--muted); padding: 8px 16px; cursor: pointer;
+      font-size: 14px; border-bottom: 2px solid transparent; margin-bottom: -1px;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--green); border-bottom-color: var(--green); font-weight: 600; }
+
+    /* ── Table ── */
+    .table-wrap { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    thead { background: var(--card2); }
+    th { padding: 10px 14px; text-align: left; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; font-weight: 600; }
+    td { padding: 10px 14px; border-top: 1px solid var(--border); vertical-align: middle; }
+    tr:hover td { background: rgba(255,255,255,.02); }
+
+    /* ── Badges ── */
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .badge-pending   { background: rgba(245,158,11,.15); color: var(--amber); border: 1px solid rgba(245,158,11,.3); }
+    .badge-confirmed { background: rgba(34,197,94,.15);  color: var(--green); border: 1px solid rgba(34,197,94,.3); }
+    .badge-cancelled { background: rgba(239,68,68,.15);  color: var(--red);   border: 1px solid rgba(239,68,68,.3); }
+
+    /* ── Action buttons ── */
+    .actions { display: flex; gap: 6px; }
+    .btn { padding: 5px 11px; border-radius: 6px; border: none; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .btn-confirm  { background: rgba(34,197,94,.15);  color: var(--green); border: 1px solid rgba(34,197,94,.4); }
+    .btn-confirm:hover  { background: var(--green2); color: white; }
+    .btn-cancel   { background: rgba(239,68,68,.15);  color: var(--red);   border: 1px solid rgba(239,68,68,.4); }
+    .btn-cancel:hover   { background: var(--red);   color: white; }
+    .btn-pdf      { background: rgba(59,130,246,.15); color: var(--blue);  border: 1px solid rgba(59,130,246,.4); }
+    .btn-pdf:hover      { background: var(--blue);  color: white; }
+
+    /* ── Logs ── */
+    .log-usuario { color: var(--green); font-weight: 600; }
+    .log-accion  { color: var(--amber); }
+
+    /* ── Empty state ── */
+    .empty { padding: 40px; text-align: center; color: var(--muted); }
+
+    /* ── Toast ── */
+    #toast {
+      position: fixed; bottom: 24px; right: 24px; background: var(--card2);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 12px 20px; font-size: 13px; opacity: 0; transition: opacity .3s;
+      pointer-events: none; z-index: 99;
+    }
+    #toast.show { opacity: 1; }
+    #toast.ok  { border-color: var(--green); color: var(--green); }
+    #toast.err { border-color: var(--red);   color: var(--red); }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage">
+  <div class="login-box">
+    <h1>Axilitla 4x4</h1>
+    <p>Panel de Administración de Reservas</p>
+    <form id="loginForm" onsubmit="login(event)">
+      <label>Usuario</label>
+      <input id="inpUser" autocomplete="username" required>
+      <label>Contraseña</label>
+      <input id="inpPass" type="password" autocomplete="current-password" required>
+      <button type="submit" class="btn-login">Entrar</button>
+      <p id="loginError"></p>
+    </form>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="appPage">
+  <header>
+    <div class="logo">Axilitla 4x4 <span>Panel de Reservas</span></div>
+    <span class="user-badge" id="userBadge">—</span>
+    <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
+  </header>
+  <main>
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat-card total">    <div class="stat-label">Total</div>        <div class="stat-value" id="sTotal">0</div></div>
+      <div class="stat-card pending">  <div class="stat-label">Pendientes</div>   <div class="stat-value" id="sPending">0</div></div>
+      <div class="stat-card confirmed"><div class="stat-label">Confirmadas</div>  <div class="stat-value" id="sConfirmed">0</div></div>
+      <div class="stat-card cancelled"><div class="stat-label">Canceladas</div>   <div class="stat-value" id="sCancelled">0</div></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" onclick="setTab('todas',   this)">Todas</button>
+      <button class="tab"        onclick="setTab('pending', this)">Pendientes</button>
+      <button class="tab"        onclick="setTab('confirmed',this)">Confirmadas</button>
+      <button class="tab"        onclick="setTab('cancelled',this)">Canceladas</button>
+      <button class="tab"        onclick="setTab('logs',    this)">Bitácora</button>
+    </div>
+
+    <!-- Reservas -->
+    <div id="secReservas" class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Folio</th><th>Cliente</th><th>Fecha</th><th>Hora</th>
+            <th>Vehículo</th><th>Ruta</th><th>Personas</th><th>Total</th>
+            <th>Estado</th><th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tbReservas"></tbody>
+      </table>
+    </div>
+
+    <!-- Bitácora -->
+    <div id="secLogs" class="table-wrap" style="display:none">
+      <table>
+        <thead>
+          <tr><th>Fecha y hora</th><th>Usuario</th><th>Acción</th><th>Folio</th><th>Detalles</th></tr>
+        </thead>
+        <tbody id="tbLogs"></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script>
+let reservas = [];
+let currentTab = 'todas';
+
+// ── Auth ──────────────────────────────────────────────────
+async function checkAuth() {
+  const r = await fetch('/api/me');
+  if (r.ok) {
+    const d = await r.json();
+    showApp(d.usuario);
+    loadReservas();
+  }
+}
+
+async function login(e) {
+  e.preventDefault();
+  const usuario  = document.getElementById('inpUser').value.trim();
+  const password = document.getElementById('inpPass').value;
+  const r = await fetch('/api/login', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ usuario, password })
+  });
+  const d = await r.json();
+  if (r.ok) {
+    showApp(d.usuario);
+    loadReservas();
+  } else {
+    document.getElementById('loginError').textContent = d.error;
+  }
+}
+
+async function logout() {
+  await fetch('/api/logout', { method: 'POST' });
+  document.getElementById('appPage').style.display  = 'none';
+  document.getElementById('loginPage').style.display = 'flex';
+}
+
+function showApp(usuario) {
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('appPage').style.display   = 'block';
+  document.getElementById('userBadge').textContent   = usuario;
+}
+
+// ── Datos ──────────────────────────────────────────────────
+async function loadReservas() {
+  const r = await fetch('/api/reservas');
+  if (!r.ok) return;
+  reservas = await r.json();
+  updateStats();
+  renderReservas();
+}
+
+function updateStats() {
+  document.getElementById('sTotal').textContent     = reservas.length;
+  document.getElementById('sPending').textContent   = reservas.filter(r => r.estado === 'Pendiente de pago').length;
+  document.getElementById('sConfirmed').textContent = reservas.filter(r => r.estado === 'Confirmada').length;
+  document.getElementById('sCancelled').textContent = reservas.filter(r => r.estado === 'Cancelada').length;
+}
+
+function renderReservas() {
+  const map = { pending: 'Pendiente de pago', confirmed: 'Confirmada', cancelled: 'Cancelada' };
+  const filtro = map[currentTab];
+  const lista  = filtro ? reservas.filter(r => r.estado === filtro) : reservas;
+
+  const tb = document.getElementById('tbReservas');
+  if (lista.length === 0) {
+    tb.innerHTML = `<tr><td colspan="10" class="empty">Sin reservas en esta categoría.</td></tr>`;
+    return;
+  }
+  tb.innerHTML = lista.map(r => {
+    const badgeCls = r.estado === 'Confirmada' ? 'badge-confirmed'
+                   : r.estado === 'Cancelada'  ? 'badge-cancelled' : 'badge-pending';
+    const acciones = `
+      ${r.estado === 'Pendiente de pago' ? `<button class="btn btn-confirm" onclick="confirmar('${r.folio}')">Confirmar</button>` : ''}
+      ${r.estado !== 'Cancelada'         ? `<button class="btn btn-cancel"  onclick="cancelar('${r.folio}')">Cancelar</button>`  : ''}
+      <button class="btn btn-pdf" onclick="downloadPDF('${r.folio}')">PDF</button>
+    `;
+    return `<tr>
+      <td><strong>${r.folio}</strong></td>
+      <td>${r.cliente}</td>
+      <td>${fmtFecha(r.fecha)}</td>
+      <td>${r.horaInicio}</td>
+      <td>${r.vehiculoNombre || r.vehiculoId}</td>
+      <td>${r.ruta}</td>
+      <td>${r.personas}</td>
+      <td>${r.precio}</td>
+      <td><span class="badge ${badgeCls}">${r.estado}</span></td>
+      <td><div class="actions">${acciones}</div></td>
+    </tr>`;
+  }).join('');
+}
+
+function fmtFecha(fecha) {
+  if (!fecha) return '—';
+  try {
+    const [y, m, d] = fecha.split('-').map(Number);
+    return new Date(y, m - 1, d).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
+  } catch { return fecha; }
+}
+
+// ── Acciones ──────────────────────────────────────────────
+async function confirmar(folio) {
+  if (!confirm(`¿Confirmar la reserva ${folio}?`)) return;
+  const r = await fetch(`/api/confirmar/${folio}`, { method: 'POST' });
+  const d = await r.json();
+  if (r.ok) { toast('Reserva confirmada', 'ok'); await loadReservas(); }
+  else       { toast(d.error, 'err'); }
+}
+
+async function cancelar(folio) {
+  if (!confirm(`¿Cancelar la reserva ${folio}? Esta acción quedará en la bitácora.`)) return;
+  const r = await fetch(`/api/cancelar/${folio}`, { method: 'POST' });
+  const d = await r.json();
+  if (r.ok) { toast('Reserva cancelada', 'ok'); await loadReservas(); }
+  else       { toast(d.error, 'err'); }
+}
+
+function downloadPDF(folio) {
+  window.open(`/api/pdf/${folio}`, '_blank');
+}
+
+// ── Bitácora ──────────────────────────────────────────────
+async function loadLogs() {
+  const r = await fetch('/api/logs');
+  if (!r.ok) return;
+  const logs = await r.json();
+  const tb = document.getElementById('tbLogs');
+  if (logs.length === 0) {
+    tb.innerHTML = `<tr><td colspan="5" class="empty">Sin registros aún.</td></tr>`;
+    return;
+  }
+  tb.innerHTML = logs.map(l => `<tr>
+    <td>${new Date(l.fecha).toLocaleString('es-MX')}</td>
+    <td class="log-usuario">${l.usuario}</td>
+    <td class="log-accion">${l.accion}</td>
+    <td>${l.folio || '—'}</td>
+    <td>${l.detalles}</td>
+  </tr>`).join('');
+}
+
+// ── Tabs ──────────────────────────────────────────────────
+function setTab(tab, btn) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const showReservas = tab !== 'logs';
+  document.getElementById('secReservas').style.display = showReservas ? '' : 'none';
+  document.getElementById('secLogs').style.display     = showReservas ? 'none' : '';
+
+  if (tab === 'logs') loadLogs(); else renderReservas();
+}
+
+// ── Toast ─────────────────────────────────────────────────
+function toast(msg, type = 'ok') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `show ${type}`;
+  setTimeout(() => t.className = '', 3000);
+}
+
+// ── Init ──────────────────────────────────────────────────
+checkAuth();
+</script>
+</body>
+</html>
