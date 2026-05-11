@@ -4,14 +4,15 @@ const fs   = require('fs');
 const path = require('path');
 const { RUTAS, VEHICULOS } = require('./data');
 
-const USE_KV   = !!process.env.KV_REST_API_URL;
+const USE_KV   = !!process.env.KV_REST_API_URL && !!process.env.KV_REST_API_TOKEN;
 const DB_PATH  = path.join(__dirname, 'reservas.json');
 const LOG_PATH = path.join(__dirname, 'logs.json');
 
 // ── Almacenamiento ────────────────────────────────────────
 async function readKey(key, def = []) {
   if (USE_KV) {
-    const { kv } = require('@vercel/kv');
+    const { createClient } = require('@vercel/kv');
+    const kv = createClient({ url: process.env.KV_REST_API_URL, token: process.env.KV_REST_API_TOKEN });
     return (await kv.get(key)) ?? def;
   }
   const file = key === 'reservas' ? DB_PATH : LOG_PATH;
@@ -21,7 +22,8 @@ async function readKey(key, def = []) {
 
 async function writeKey(key, value) {
   if (USE_KV) {
-    const { kv } = require('@vercel/kv');
+    const { createClient } = require('@vercel/kv');
+    const kv = createClient({ url: process.env.KV_REST_API_URL, token: process.env.KV_REST_API_TOKEN });
     await kv.set(key, value);
     return;
   }
