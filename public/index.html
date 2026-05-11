@@ -1,365 +1,1155 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Axilitla 4x4 — Panel</title>
-  <style>
-    :root {
-      --bg:      #0d1117;
-      --card:    #161b22;
-      --card2:   #21262d;
-      --border:  #30363d;
-      --green:   #22c55e;
-      --green2:  #16a34a;
-      --amber:   #f59e0b;
-      --red:     #ef4444;
-      --blue:    #3b82f6;
-      --text:    #e6edf3;
-      --muted:   #8b949e;
-      --radius:  8px;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorprendente Tour · Plataforma de Reservas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root {
+  --green:        #1B3A2A;
+  --green-mid:    #2D6A4F;
+  --green-light:  #F4FAF5;
+  --green-pale:   #F4FAF5;
+  --green-border: #9BD0AE;
+  --ink:          #2D1B0E;
+  --ink-2:        #4a4038;
+  --ink-3:        #8a7e72;
+  --muted:        #8a7e72;
+  --surface:      #ffffff;
+  --surface-2:    #FAF8F2;
+  --surface-3:    #F0EBE0;
+  --border:       #E0D9CE;
+  --border-2:     #d7ccbe;
+  --red:          #dc2626;
+  --red-light:    #fee2e2;
+  --red-dark:     #991b1b;
+  --amber:        #C4703A;
+  --amber-light:  #FEF3E6;
+  --amber-dark:   #92400e;
+  --blue:         #4CAF7A;
+  --blue-light:   #ECF9F0;
+  --blue-dark:    #1B3A2A;
+  --shadow-sm:    0 1px 3px rgba(45,27,14,.06), 0 1px 2px rgba(45,27,14,.04);
+  --shadow:       0 4px 16px rgba(45,27,14,.08);
+  --shadow-lg:    0 12px 40px rgba(45,27,14,.16);
+  --radius:       10px;
+  --radius-lg:    16px;
+  --radius-xl:    24px;
+  font-size: 15px;
+}
 
-    /* ── Login ── */
-    #loginPage {
-      min-height: 100vh; display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(135deg, #0d1117 0%, #0f2d0f 100%);
-    }
-    .login-box {
-      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-      padding: 40px 36px; width: 360px;
-    }
-    .login-box h1 { color: var(--green); font-size: 22px; margin-bottom: 4px; }
-    .login-box p  { color: var(--muted); margin-bottom: 28px; font-size: 13px; }
-    .login-box label { display: block; margin-bottom: 4px; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
-    .login-box input {
-      width: 100%; padding: 10px 12px; background: var(--card2); border: 1px solid var(--border);
-      border-radius: var(--radius); color: var(--text); font-size: 14px; margin-bottom: 16px;
-    }
-    .login-box input:focus { outline: none; border-color: var(--green); }
-    .btn-login {
-      width: 100%; padding: 11px; background: var(--green2); color: white; border: none;
-      border-radius: var(--radius); font-size: 14px; font-weight: 600; cursor: pointer;
-    }
-    .btn-login:hover { background: var(--green); }
-    #loginError { color: var(--red); font-size: 13px; margin-top: 12px; text-align: center; min-height: 18px; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: var(--surface-2); color: var(--ink); min-height: 100vh; }
 
-    /* ── App layout ── */
-    #appPage { display: none; }
-    header {
-      background: var(--card); border-bottom: 1px solid var(--border);
-      padding: 0 24px; height: 56px; display: flex; align-items: center; gap: 12px;
-      position: sticky; top: 0; z-index: 10;
-    }
-    .logo { color: var(--green); font-weight: 700; font-size: 16px; flex: 1; }
-    .logo span { color: var(--muted); font-weight: 400; font-size: 12px; margin-left: 8px; }
-    .user-badge { background: var(--card2); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; font-size: 13px; }
-    .btn-logout { background: none; border: 1px solid var(--border); color: var(--muted); padding: 5px 12px; border-radius: var(--radius); cursor: pointer; font-size: 13px; }
-    .btn-logout:hover { border-color: var(--red); color: var(--red); }
+/* ── Login overlay ── */
+#login-overlay {
+  position: fixed; inset: 0; z-index: 2000;
+  background: linear-gradient(135deg, #0F1A10 0%, #1B3A2A 60%, #0a1208 100%);
+  display: flex; align-items: center; justify-content: center;
+}
+.login-card {
+  background: var(--surface); border-radius: 20px;
+  padding: 40px 36px; width: 360px;
+  box-shadow: 0 24px 64px rgba(0,0,0,.45);
+}
+.login-logo { text-align: center; margin-bottom: 28px; }
+.login-logo .mark { font-size: 36px; margin-bottom: 8px; }
+.login-logo .brand { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 700; color: var(--green); }
+.login-logo .sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.login-field { margin-bottom: 14px; }
+.login-field label { display: block; font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-2); margin-bottom: 5px; }
+.login-field input {
+  width: 100%; padding: 10px 12px; border: 1px solid var(--border-2); border-radius: var(--radius);
+  font-size: 14px; font-family: inherit; color: var(--ink); outline: none; transition: border-color .12s;
+}
+.login-field input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(26,92,53,.1); }
+#login-error { color: var(--red); font-size: 12px; text-align: center; min-height: 16px; margin-bottom: 8px; }
+.btn-login-submit {
+  width: 100%; padding: 12px; background: var(--green); color: white; border: none;
+  border-radius: var(--radius); font-size: 14px; font-weight: 700; cursor: pointer;
+  font-family: inherit; transition: background .15s;
+}
+.btn-login-submit:hover { background: #2D6A4F; }
 
-    main { padding: 24px; max-width: 1200px; margin: 0 auto; }
+/* ── Topbar ── */
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: #0F1A10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; height: 56px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 2px 12px rgba(0,0,0,.2);
+}
+.topbar-brand { display: flex; align-items: center; gap: 10px; }
+.brand-mark { width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,.08); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.brand-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 700; color: #E8B87A; letter-spacing: .1px; }
+.brand-name span { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 400; color: rgba(255,255,255,.45); }
+.topbar-nav { display: flex; gap: 2px; }
+.nav-tab {
+  font-family: 'Syne', sans-serif; padding: 8px 16px; border-radius: 8px; font-size: 11px; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase; border: none; cursor: pointer; transition: all .15s;
+  color: rgba(255,255,255,.55); background: transparent;
+}
+.nav-tab:hover { background: rgba(255,255,255,.1); color: rgba(255,255,255,.85); }
+.nav-tab.active { background: rgba(196,112,58,.22); color: #E8B87A; }
+.topbar-actions { display: flex; gap: 8px; align-items: center; }
+.topbar-user { color: rgba(255,255,255,.6); font-size: 12px; padding-right: 4px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: var(--radius); font-size: 12px; font-weight: 700;
+  letter-spacing: .04em; text-transform: uppercase;
+  border: none; cursor: pointer; transition: all .15s; font-family: inherit;
+}
+.btn-ghost { background: rgba(255,255,255,.12); color: #fff; }
+.btn-ghost:hover { background: rgba(255,255,255,.2); }
+.btn-primary { background: #C4703A; color: #fff; }
+.btn-primary:hover { background: #d4834e; }
+.btn-danger { background: var(--red-light); color: var(--red-dark); }
+.btn-danger:hover { background: #fecaca; }
+.btn-green { background: #2D6A4F; color: #fff; }
+.btn-green:hover { background: #3a8a67; }
+.btn-outline { background: transparent; color: var(--ink-2); border: 1px solid var(--border-2); }
+.btn-outline:hover { background: #F5F1E8; }
+.btn-pdf-row { background: var(--amber-light); color: var(--amber-dark); border: 1px solid #f0c070; }
+.btn-pdf-row:hover { background: #fde68a; }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn-icon { padding: 7px; }
 
-    /* ── Stats ── */
-    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
-    .stat-card {
-      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 16px 20px;
-    }
-    .stat-label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
-    .stat-value { font-size: 28px; font-weight: 700; margin-top: 4px; }
-    .stat-card.total    .stat-value { color: var(--text); }
-    .stat-card.pending  .stat-value { color: var(--amber); }
-    .stat-card.confirmed .stat-value { color: var(--green); }
-    .stat-card.cancelled .stat-value { color: var(--red); }
+/* ── Views ── */
+.view { display: none; padding: 24px; max-width: 1400px; margin: 0 auto; }
+.view.active { display: block; }
+.page-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 20px; }
+.page-title { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 700; color: var(--ink); letter-spacing: -.1px; }
+.page-sub { font-size: 13px; color: var(--muted); margin-top: 2px; }
 
-    /* ── Tabs ── */
-    .tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 0; }
-    .tab {
-      background: none; border: none; color: var(--muted); padding: 8px 16px; cursor: pointer;
-      font-size: 14px; border-bottom: 2px solid transparent; margin-bottom: -1px;
-    }
-    .tab:hover { color: var(--text); }
-    .tab.active { color: var(--green); border-bottom-color: var(--green); font-weight: 600; }
+/* ── Table ── */
+.card { background: var(--surface); border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); overflow: hidden; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th {
+  background: var(--surface-3); padding: 10px 14px; text-align: left;
+  font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: .08em;
+  color: var(--ink-3); text-transform: uppercase; border-bottom: 1px solid var(--border); white-space: nowrap;
+}
+tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--green-pale); }
+tbody td { padding: 11px 14px; color: var(--ink); vertical-align: middle; }
+.td-mono { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--ink-3); }
+.td-bold { font-weight: 600; }
+.td-muted { color: var(--muted); font-size: 12px; }
 
-    /* ── Table ── */
-    .table-wrap { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-    table { width: 100%; border-collapse: collapse; }
-    thead { background: var(--card2); }
-    th { padding: 10px 14px; text-align: left; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; font-weight: 600; }
-    td { padding: 10px 14px; border-top: 1px solid var(--border); vertical-align: middle; }
-    tr:hover td { background: rgba(255,255,255,.02); }
+/* ── Badges ── */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: 'Syne', sans-serif; padding: 3px 10px; border-radius: 20px;
+  font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+}
+.badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
+.badge-green { background: var(--green-light); color: var(--green); }
+.badge-green::before { background: var(--green); }
+.badge-amber { background: var(--amber-light); color: var(--amber-dark); }
+.badge-amber::before { background: var(--amber); }
+.badge-red { background: var(--red-light); color: var(--red-dark); }
+.badge-red::before { background: var(--red); }
 
-    /* ── Badges ── */
-    .badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-    .badge-pending   { background: rgba(245,158,11,.15); color: var(--amber); border: 1px solid rgba(245,158,11,.3); }
-    .badge-confirmed { background: rgba(34,197,94,.15);  color: var(--green); border: 1px solid rgba(34,197,94,.3); }
-    .badge-cancelled { background: rgba(239,68,68,.15);  color: var(--red);   border: 1px solid rgba(239,68,68,.3); }
+/* ── Empty state ── */
+.empty-state { padding: 48px; text-align: center; color: var(--muted); }
+.empty-state svg { margin-bottom: 12px; opacity: .3; }
+.empty-state p { font-size: 14px; }
 
-    /* ── Action buttons ── */
-    .actions { display: flex; gap: 6px; }
-    .btn { padding: 5px 11px; border-radius: 6px; border: none; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
-    .btn-confirm  { background: rgba(34,197,94,.15);  color: var(--green); border: 1px solid rgba(34,197,94,.4); }
-    .btn-confirm:hover  { background: var(--green2); color: white; }
-    .btn-cancel   { background: rgba(239,68,68,.15);  color: var(--red);   border: 1px solid rgba(239,68,68,.4); }
-    .btn-cancel:hover   { background: var(--red);   color: white; }
-    .btn-pdf      { background: rgba(59,130,246,.15); color: var(--blue);  border: 1px solid rgba(59,130,246,.4); }
-    .btn-pdf:hover      { background: var(--blue);  color: white; }
+/* ── Calendar ── */
+.cal-nav {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 12px 16px; box-shadow: var(--shadow-sm);
+}
+.cal-nav-btn {
+  width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border-2);
+  background: var(--surface); cursor: pointer; display: flex; align-items: center;
+  justify-content: center; font-size: 16px; color: var(--ink-2); transition: all .15s; flex-shrink: 0;
+}
+.cal-nav-btn:hover { background: var(--green-pale); border-color: var(--green-border); color: var(--green); }
+.cal-date-display { flex: 1; text-align: center; }
+.cal-date-main { font-size: 17px; font-weight: 600; color: var(--ink); letter-spacing: -.3px; }
+.cal-date-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.cal-grid-wrap { overflow-x: auto; }
+.cal-grid {
+  display: grid; min-width: 640px; border-radius: var(--radius-lg);
+  border: 1px solid var(--border); overflow: hidden; box-shadow: var(--shadow-sm);
+}
+.cal-col-header {
+  background: #0F1A10; color: #fff; padding: 10px 8px; text-align: center;
+  font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .04em;
+  border-right: 1px solid rgba(255,255,255,.12);
+}
+.cal-col-header:last-child { border-right: none; }
+.cal-col-header .veh-type { font-weight: 400; opacity: .7; font-size: 10px; margin-top: 1px; }
+.cal-time-label {
+  background: var(--surface-3); padding: 0 10px;
+  display: flex; align-items: center; justify-content: flex-end;
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  color: var(--ink-3); border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border); min-height: 48px; white-space: nowrap;
+}
+.cal-cell {
+  background: var(--surface); border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border); min-height: 48px; padding: 4px 6px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background .12s; position: relative;
+}
+.cal-cell:last-child { border-right: none; }
+.cal-cell:hover { background: var(--green-pale); }
+.cal-cell .avail-text { font-size: 10px; color: var(--border-2); }
+.cal-block {
+  width: 100%; border-radius: 6px; padding: 5px 8px;
+  background: var(--green-light); border: 1px solid var(--green-border);
+  cursor: pointer; transition: opacity .12s;
+}
+.cal-block:hover { opacity: .8; }
+.cal-block-name { font-size: 11px; font-weight: 600; color: var(--green); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal-block-tour { font-size: 10px; color: var(--green-mid); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal-cell-reserved { background: var(--surface-3); cursor: default; }
 
-    /* ── Logs ── */
-    .log-usuario { color: var(--green); font-weight: 600; }
-    .log-accion  { color: var(--amber); }
+/* ── Modal ── */
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,.35);
+  display: flex; align-items: center; justify-content: center; z-index: 500;
+  padding: 20px; opacity: 0; pointer-events: none; transition: opacity .18s;
+}
+.modal-backdrop.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--surface); border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg); width: 100%; max-width: 480px;
+  max-height: 90vh; overflow-y: auto;
+  transform: translateY(16px) scale(.98); transition: transform .18s;
+}
+.modal-backdrop.open .modal { transform: none; }
+.modal-header { padding: 20px 24px 0; display: flex; align-items: center; justify-content: space-between; }
+.modal-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 700; letter-spacing: 0; }
+.modal-close {
+  width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border);
+  background: transparent; cursor: pointer; font-size: 18px; color: var(--muted);
+  display: flex; align-items: center; justify-content: center; transition: all .12s;
+}
+.modal-close:hover { background: var(--red-light); color: var(--red); border-color: #fca5a5; }
+.modal-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+.modal-footer { padding: 0 24px 20px; display: flex; gap: 8px; justify-content: flex-end; }
+.form-row { display: flex; flex-direction: column; gap: 5px; }
+.form-row label {
+  font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; color: var(--ink-2);
+  letter-spacing: .08em; text-transform: uppercase;
+}
+.form-row input, .form-row select {
+  padding: 9px 12px; border: 1px solid var(--border-2); border-radius: var(--radius);
+  font-size: 13px; font-family: inherit; color: var(--ink); background: var(--surface);
+  transition: border-color .12s, box-shadow .12s; outline: none;
+}
+.form-row input:focus, .form-row select:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(26,92,53,.1); }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-info { background: var(--green-pale); border: 1px solid var(--green-border); border-radius: var(--radius); padding: 10px 12px; font-size: 12px; color: var(--green); display: none; }
+.form-info.show { display: block; }
+.form-alert { background: var(--red-light); border: 1px solid #fca5a5; border-radius: var(--radius); padding: 10px 12px; font-size: 12px; color: var(--red-dark); display: none; }
+.form-alert.show { display: block; }
 
-    /* ── Empty state ── */
-    .empty { padding: 40px; text-align: center; color: var(--muted); }
+/* ── Toast ── */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(12px);
+  background: var(--ink); color: #fff; padding: 10px 20px;
+  border-radius: 20px; font-size: 13px; z-index: 600;
+  opacity: 0; transition: all .2s; pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    /* ── Toast ── */
-    #toast {
-      position: fixed; bottom: 24px; right: 24px; background: var(--card2);
-      border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 12px 20px; font-size: 13px; opacity: 0; transition: opacity .3s;
-      pointer-events: none; z-index: 99;
-    }
-    #toast.show { opacity: 1; }
-    #toast.ok  { border-color: var(--green); color: var(--green); }
-    #toast.err { border-color: var(--red);   color: var(--red); }
-  </style>
+/* ── Filters ── */
+.filters { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+.filter-input {
+  padding: 7px 12px; border: 1px solid var(--border-2); border-radius: var(--radius);
+  font-size: 13px; font-family: inherit; outline: none; background: var(--surface); transition: border-color .12s;
+}
+.filter-input:focus { border-color: var(--green); }
+.filter-select { padding: 7px 12px; border: 1px solid var(--border-2); border-radius: var(--radius); font-size: 13px; font-family: inherit; outline: none; background: var(--surface); cursor: pointer; }
+
+/* ── Stats strip ── */
+.stats-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
+.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px 16px; box-shadow: var(--shadow-sm); }
+.stat-label { font-family: 'Syne', sans-serif; font-size: 10px; color: var(--muted); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 4px; }
+.stat-value { font-family: 'Cormorant Garamond', serif; font-size: 34px; font-weight: 700; color: var(--ink); letter-spacing: -.2px; line-height: 1; }
+.stat-sub { font-size: 11px; color: var(--ink-3); margin-top: 2px; }
+
+/* ── Dashboard ── */
+.dash-grid { display: grid; grid-template-columns: 1.3fr .9fr; gap: 14px; margin-top: 14px; }
+.dash-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); overflow: hidden; }
+.dash-head { padding: 12px 14px; border-bottom: 1px solid var(--border); font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); background: var(--surface-3); }
+.dash-body { padding: 8px 12px 12px; }
+.dash-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.dash-table th, .dash-table td { padding: 9px 8px; border-bottom: 1px solid var(--border); text-align: left; }
+.dash-table th { font-family: 'Syne', sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3); }
+.dash-table tr:last-child td { border-bottom: none; }
+.occ-list { display: flex; flex-direction: column; gap: 10px; }
+.occ-row { display: grid; grid-template-columns: 165px 1fr 52px; align-items: center; gap: 10px; }
+.occ-name { font-size: 11px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.occ-track { width: 100%; height: 10px; border-radius: 999px; background: var(--surface-3); overflow: hidden; border: 1px solid var(--border); }
+.occ-fill { height: 100%; border-radius: 999px; }
+.occ-green { background: #2D6A4F; } .occ-amber { background: #C4703A; } .occ-red { background: #dc2626; }
+.occ-pct { font-size: 11px; font-weight: 600; color: var(--ink-3); text-align: right; }
+
+/* ── Audit log ── */
+.audit-user { font-weight: 600; color: var(--green-mid); }
+.audit-action { color: var(--amber); font-size: 12px; }
+.audit-ts { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+
+@media (max-width: 980px) { .dash-grid { grid-template-columns: 1fr; } }
+</style>
 </head>
 <body>
 
-<!-- LOGIN -->
-<div id="loginPage">
-  <div class="login-box">
-    <h1>Axilitla 4x4</h1>
-    <p>Panel de Administración de Reservas</p>
-    <form id="loginForm" onsubmit="login(event)">
+<!-- ══ LOGIN OVERLAY ══ -->
+<div id="login-overlay">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="mark">🌿</div>
+      <div class="brand">Sorprendente Tour</div>
+      <div class="sub">Plataforma de Reservas</div>
+    </div>
+    <div class="login-field">
       <label>Usuario</label>
-      <input id="inpUser" autocomplete="username" required>
+      <input id="login-user" autocomplete="username" placeholder="Usuario" onkeydown="if(event.key==='Enter')login()">
+    </div>
+    <div class="login-field">
       <label>Contraseña</label>
-      <input id="inpPass" type="password" autocomplete="current-password" required>
-      <button type="submit" class="btn-login">Entrar</button>
-      <p id="loginError"></p>
-    </form>
+      <input id="login-pass" type="password" autocomplete="current-password" placeholder="Contraseña" onkeydown="if(event.key==='Enter')login()">
+    </div>
+    <p id="login-error"></p>
+    <button class="btn-login-submit" onclick="login()">Entrar</button>
   </div>
 </div>
 
-<!-- APP -->
-<div id="appPage">
-  <header>
-    <div class="logo">Axilitla 4x4 <span>Panel de Reservas</span></div>
-    <span class="user-badge" id="userBadge">—</span>
-    <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
-  </header>
-  <main>
-    <!-- Stats -->
-    <div class="stats">
-      <div class="stat-card total">    <div class="stat-label">Total</div>        <div class="stat-value" id="sTotal">0</div></div>
-      <div class="stat-card pending">  <div class="stat-label">Pendientes</div>   <div class="stat-value" id="sPending">0</div></div>
-      <div class="stat-card confirmed"><div class="stat-label">Confirmadas</div>  <div class="stat-value" id="sConfirmed">0</div></div>
-      <div class="stat-card cancelled"><div class="stat-label">Canceladas</div>   <div class="stat-value" id="sCancelled">0</div></div>
-    </div>
+<!-- ══ APP ROOT ══ -->
+<div id="app-root" style="display:none">
 
-    <!-- Tabs -->
-    <div class="tabs">
-      <button class="tab active" onclick="setTab('todas',   this)">Todas</button>
-      <button class="tab"        onclick="setTab('pending', this)">Pendientes</button>
-      <button class="tab"        onclick="setTab('confirmed',this)">Confirmadas</button>
-      <button class="tab"        onclick="setTab('cancelled',this)">Canceladas</button>
-      <button class="tab"        onclick="setTab('logs',    this)">Bitácora</button>
-    </div>
+<!-- TOPBAR -->
+<nav class="topbar">
+  <div class="topbar-brand">
+    <div class="brand-mark">🌿</div>
+    <div class="brand-name">Sorprendente Tour <span>· Plataforma de Reservas</span></div>
+  </div>
+  <div class="topbar-nav">
+    <button class="nav-tab" onclick="switchView('dashboard')">Dashboard</button>
+    <button class="nav-tab active" onclick="switchView('reservas')">Reservas</button>
+    <button class="nav-tab" onclick="switchView('calendario')">Calendario</button>
+    <button class="nav-tab" onclick="switchView('bitacora')">Bitácora</button>
+  </div>
+  <div class="topbar-actions">
+    <span class="topbar-user" id="topbar-user"></span>
+    <button class="btn btn-ghost btn-sm" onclick="exportExcel()">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      Excel
+    </button>
+    <button class="btn btn-primary" onclick="openNewModal()">+ Nueva reserva</button>
+    <button class="btn btn-ghost btn-sm" onclick="logout()" title="Cerrar sesión" style="color:rgba(255,255,255,.5);padding:7px 10px">✕ Salir</button>
+  </div>
+</nav>
 
-    <!-- Reservas -->
-    <div id="secReservas" class="table-wrap">
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ══ VIEW: DASHBOARD ══ -->
+<div class="view" id="view-dashboard">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Dashboard</div>
+      <div class="page-sub" id="dash-subtitle">Resumen operativo automático</div>
+    </div>
+  </div>
+  <div class="stats-strip" id="dash-kpis"></div>
+  <div class="dash-grid">
+    <div class="dash-card">
+      <div class="dash-head">Reservas recientes</div>
+      <div class="dash-body">
+        <table class="dash-table">
+          <thead><tr><th>Fecha</th><th>Cliente</th><th>Recorrido</th><th>Unidad</th><th>Precio</th></tr></thead>
+          <tbody id="dash-recent-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="dash-card">
+      <div class="dash-head">Ranking de recorridos</div>
+      <div class="dash-body">
+        <table class="dash-table">
+          <thead><tr><th>Recorrido</th><th>Reservas</th><th>Ingresos</th></tr></thead>
+          <tbody id="dash-routes-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="dash-card" style="margin-top:14px">
+    <div class="dash-head">Ocupación por vehículo (semáforo)</div>
+    <div class="dash-body"><div class="occ-list" id="dash-occupancy"></div></div>
+  </div>
+</div>
+
+<!-- ══ VIEW: RESERVAS ══ -->
+<div class="view active" id="view-reservas">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Reservas</div>
+      <div class="page-sub" id="res-count-label">Cargando...</div>
+    </div>
+  </div>
+  <div class="stats-strip" id="stats-strip"></div>
+  <div class="filters">
+    <input class="filter-input" id="search-input" placeholder="Buscar cliente, vehículo..." oninput="renderReservations()" style="min-width:200px">
+    <select class="filter-select" id="filter-status" onchange="renderReservations()">
+      <option value="">Todos los estados</option>
+      <option value="Confirmada">Confirmada</option>
+      <option value="Pendiente">Pendiente</option>
+      <option value="Cancelada">Cancelada</option>
+    </select>
+    <select class="filter-select" id="filter-vehicle" onchange="renderReservations()">
+      <option value="">Todos los vehículos</option>
+    </select>
+    <input class="filter-input" id="filter-date" type="date" onchange="renderReservations()" title="Filtrar por fecha">
+  </div>
+  <div class="card">
+    <div class="table-wrap">
       <table>
         <thead>
           <tr>
-            <th>Folio</th><th>Cliente</th><th>Fecha</th><th>Hora</th>
-            <th>Vehículo</th><th>Ruta</th><th>Personas</th><th>Total</th>
-            <th>Estado</th><th>Acciones</th>
+            <th>Folio</th><th>Fecha</th><th>Cliente</th><th>Vehículo</th>
+            <th>Recorrido</th><th>Horario</th><th>Personas</th><th>Precio</th>
+            <th>Estado</th><th></th>
           </tr>
         </thead>
-        <tbody id="tbReservas"></tbody>
+        <tbody id="res-tbody"></tbody>
       </table>
     </div>
-
-    <!-- Bitácora -->
-    <div id="secLogs" class="table-wrap" style="display:none">
-      <table>
-        <thead>
-          <tr><th>Fecha y hora</th><th>Usuario</th><th>Acción</th><th>Folio</th><th>Detalles</th></tr>
-        </thead>
-        <tbody id="tbLogs"></tbody>
-      </table>
-    </div>
-  </main>
+  </div>
 </div>
 
-<div id="toast"></div>
+<!-- ══ VIEW: CALENDARIO ══ -->
+<div class="view" id="view-calendario">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Calendario</div>
+      <div class="page-sub">Disponibilidad por vehículo · 07:00 – 22:00</div>
+    </div>
+    <button class="btn btn-green" onclick="openNewModal()">+ Nueva reserva</button>
+  </div>
+  <div class="cal-nav">
+    <button class="cal-nav-btn" onclick="changeDay(-1)">&#8249;</button>
+    <div class="cal-date-display">
+      <div class="cal-date-main" id="cal-date-main"></div>
+      <div class="cal-date-sub" id="cal-date-sub"></div>
+    </div>
+    <button class="cal-nav-btn" onclick="changeDay(1)">&#8250;</button>
+    <button class="btn btn-outline btn-sm" onclick="goToday()" style="margin-left:4px">Hoy</button>
+    <input type="date" id="cal-date-input" onchange="setCalDate(this.value)"
+      style="padding:6px 10px;border:1px solid var(--border-2);border-radius:var(--radius);font-size:13px;outline:none;margin-left:4px;font-family:inherit">
+  </div>
+  <div class="cal-grid-wrap">
+    <div class="cal-grid" id="cal-grid" style="grid-template-columns: 64px repeat(4, 1fr)"></div>
+  </div>
+</div>
+
+<!-- ══ VIEW: BITÁCORA ══ -->
+<div class="view" id="view-bitacora">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Bitácora</div>
+      <div class="page-sub">Registro de todas las acciones — quién hizo qué y cuándo</div>
+    </div>
+    <button class="btn btn-outline btn-sm" onclick="clearAuditLog()">Limpiar bitácora</button>
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Fecha y hora</th><th>Usuario</th><th>Acción</th><th>Detalles</th></tr>
+        </thead>
+        <tbody id="audit-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div><!-- /#app-root -->
+
+<!-- ══ MODAL: NUEVA / EDITAR RESERVA ══ -->
+<div class="modal-backdrop" id="modal-backdrop" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Nueva reserva</div>
+      <button class="modal-close" onclick="closeModalDirect()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-alert" id="form-alert"></div>
+      <div class="form-row">
+        <label>Tipo de recorrido</label>
+        <select id="f-tour" onchange="onTourChange()">
+          <option value="">Selecciona recorrido...</option>
+        </select>
+      </div>
+      <div class="form-info" id="tour-info"></div>
+      <div class="form-grid">
+        <div class="form-row"><label>Fecha</label><input type="date" id="f-date"></div>
+        <div class="form-row"><label>Hora inicio</label><select id="f-hour"></select></div>
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label>Vehículo</label>
+          <select id="f-vehicle" onchange="onTourChange()"><option value="">Auto-asignar</option></select>
+        </div>
+        <div class="form-row"><label>Personas</label><input type="number" id="f-persons" min="1" max="10" value="2"></div>
+      </div>
+      <div class="form-row"><label>Nombre del cliente</label><input type="text" id="f-client" placeholder="Nombre completo"></div>
+      <div class="form-grid">
+        <div class="form-row"><label>Teléfono (opcional)</label><input type="text" id="f-phone" placeholder="55 1234 5678"></div>
+        <div class="form-row"><label>Precio MXN</label><input type="number" id="f-price" placeholder="Automático"></div>
+      </div>
+      <div class="form-row"><label>Notas</label><input type="text" id="f-notes" placeholder="Notas opcionales..."></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger btn-sm" id="btn-delete" onclick="deleteCurrentRes()" style="display:none;margin-right:auto">Eliminar</button>
+      <button class="btn btn-outline" onclick="closeModalDirect()">Cancelar</button>
+      <button class="btn btn-green" id="btn-save" onclick="saveReservation()">Confirmar reserva</button>
+    </div>
+  </div>
+</div>
 
 <script>
-let reservas = [];
-let currentTab = 'todas';
+// ─── AUTH ──────────────────────────────────────────────────────────────────────
+const CREDS = { Manolo: 'RZR2026' };
+const SESSION_KEY = 'st_session';
+const AUDIT_KEY   = 'st_audit';
+let currentUser   = null;
 
-// ── Auth ──────────────────────────────────────────────────
-async function checkAuth() {
-  const r = await fetch('/api/me');
-  if (r.ok) {
-    const d = await r.json();
-    showApp(d.usuario);
-    loadReservas();
+function checkSession() {
+  const saved = sessionStorage.getItem(SESSION_KEY);
+  if (saved && CREDS[saved] !== undefined) {
+    currentUser = saved;
+    showApp();
   }
 }
 
-async function login(e) {
-  e.preventDefault();
-  const usuario  = document.getElementById('inpUser').value.trim();
-  const password = document.getElementById('inpPass').value;
-  const r = await fetch('/api/login', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ usuario, password })
-  });
-  const d = await r.json();
-  if (r.ok) {
-    showApp(d.usuario);
-    loadReservas();
+function login() {
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  if (CREDS[u] !== undefined && CREDS[u] === p) {
+    currentUser = u;
+    sessionStorage.setItem(SESSION_KEY, u);
+    document.getElementById('login-error').textContent = '';
+    showApp();
+    addAudit('Inicio de sesión', `Sesión iniciada por ${u}`);
   } else {
-    document.getElementById('loginError').textContent = d.error;
+    document.getElementById('login-error').textContent = 'Usuario o contraseña incorrectos';
+    document.getElementById('login-pass').value = '';
   }
 }
 
-async function logout() {
-  await fetch('/api/logout', { method: 'POST' });
-  document.getElementById('appPage').style.display  = 'none';
-  document.getElementById('loginPage').style.display = 'flex';
+function logout() {
+  addAudit('Cierre de sesión', `Sesión cerrada por ${currentUser}`);
+  sessionStorage.removeItem(SESSION_KEY);
+  currentUser = null;
+  document.getElementById('app-root').style.display   = 'none';
+  document.getElementById('login-overlay').style.display = 'flex';
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
 }
 
-function showApp(usuario) {
-  document.getElementById('loginPage').style.display = 'none';
-  document.getElementById('appPage').style.display   = 'block';
-  document.getElementById('userBadge').textContent   = usuario;
+function showApp() {
+  document.getElementById('login-overlay').style.display = 'none';
+  document.getElementById('app-root').style.display      = 'block';
+  document.getElementById('topbar-user').textContent     = currentUser;
+  renderReservations();
+  renderCalendar();
+  renderDashboard();
 }
 
-// ── Datos ──────────────────────────────────────────────────
-async function loadReservas() {
-  const r = await fetch('/api/reservas');
-  if (!r.ok) return;
-  reservas = await r.json();
-  updateStats();
-  renderReservas();
+// ─── AUDIT LOG ─────────────────────────────────────────────────────────────────
+function addAudit(action, details) {
+  const logs = JSON.parse(localStorage.getItem(AUDIT_KEY) || '[]');
+  logs.unshift({
+    id:      Date.now(),
+    ts:      new Date().toISOString(),
+    user:    currentUser || 'Sistema',
+    action,
+    details
+  });
+  localStorage.setItem(AUDIT_KEY, JSON.stringify(logs.slice(0, 500)));
 }
 
-function updateStats() {
-  document.getElementById('sTotal').textContent     = reservas.length;
-  document.getElementById('sPending').textContent   = reservas.filter(r => r.estado === 'Pendiente de pago').length;
-  document.getElementById('sConfirmed').textContent = reservas.filter(r => r.estado === 'Confirmada').length;
-  document.getElementById('sCancelled').textContent = reservas.filter(r => r.estado === 'Cancelada').length;
-}
-
-function renderReservas() {
-  const map = { pending: 'Pendiente de pago', confirmed: 'Confirmada', cancelled: 'Cancelada' };
-  const filtro = map[currentTab];
-  const lista  = filtro ? reservas.filter(r => r.estado === filtro) : reservas;
-
-  const tb = document.getElementById('tbReservas');
-  if (lista.length === 0) {
-    tb.innerHTML = `<tr><td colspan="10" class="empty">Sin reservas en esta categoría.</td></tr>`;
+function renderAuditLog() {
+  const logs = JSON.parse(localStorage.getItem(AUDIT_KEY) || '[]');
+  const tb   = document.getElementById('audit-tbody');
+  if (!logs.length) {
+    tb.innerHTML = `<tr><td colspan="4"><div class="empty-state"><p>Sin registros aún.</p></div></td></tr>`;
     return;
   }
-  tb.innerHTML = lista.map(r => {
-    const badgeCls = r.estado === 'Confirmada' ? 'badge-confirmed'
-                   : r.estado === 'Cancelada'  ? 'badge-cancelled' : 'badge-pending';
-    const acciones = `
-      ${r.estado === 'Pendiente de pago' ? `<button class="btn btn-confirm" onclick="confirmar('${r.folio}')">Confirmar</button>` : ''}
-      ${r.estado !== 'Cancelada'         ? `<button class="btn btn-cancel"  onclick="cancelar('${r.folio}')">Cancelar</button>`  : ''}
-      <button class="btn btn-pdf" onclick="downloadPDF('${r.folio}')">PDF</button>
-    `;
+  tb.innerHTML = logs.map(l => {
+    const dt = new Date(l.ts);
+    const fecha = dt.toLocaleDateString('es-MX', { day:'2-digit', month:'short', year:'numeric' });
+    const hora  = dt.toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit' });
     return `<tr>
-      <td><strong>${r.folio}</strong></td>
-      <td>${r.cliente}</td>
-      <td>${fmtFecha(r.fecha)}</td>
-      <td>${r.horaInicio}</td>
-      <td>${r.vehiculoNombre || r.vehiculoId}</td>
-      <td>${r.ruta}</td>
-      <td>${r.personas}</td>
-      <td>${r.precio}</td>
-      <td><span class="badge ${badgeCls}">${r.estado}</span></td>
-      <td><div class="actions">${acciones}</div></td>
+      <td class="audit-ts">${fecha} ${hora}</td>
+      <td class="audit-user">${l.user}</td>
+      <td class="audit-action">${l.action}</td>
+      <td class="td-muted">${l.details}</td>
     </tr>`;
   }).join('');
 }
 
-function fmtFecha(fecha) {
-  if (!fecha) return '—';
-  try {
-    const [y, m, d] = fecha.split('-').map(Number);
-    return new Date(y, m - 1, d).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
-  } catch { return fecha; }
+function clearAuditLog() {
+  if (!confirm('¿Borrar toda la bitácora? Esta acción no se puede deshacer.')) return;
+  localStorage.removeItem(AUDIT_KEY);
+  renderAuditLog();
+  showToast('Bitácora limpiada');
 }
 
-// ── Acciones ──────────────────────────────────────────────
-async function confirmar(folio) {
-  if (!confirm(`¿Confirmar la reserva ${folio}?`)) return;
-  const r = await fetch(`/api/confirmar/${folio}`, { method: 'POST' });
-  const d = await r.json();
-  if (r.ok) { toast('Reserva confirmada', 'ok'); await loadReservas(); }
-  else       { toast(d.error, 'err'); }
+// ─── DATA ──────────────────────────────────────────────────────────────────────
+const TOUR_DEFINITIONS = [
+  { id: 't1', name: 'Ruta Nanacatli',  duration: 2 },
+  { id: 't2', name: 'Ruta Miradores',  duration: 3 },
+  { id: 't3', name: 'Ruta Nacimiento', duration: 4 },
+  { id: 't4', name: 'Ruta Tranidad',   duration: 4 },
+];
+
+const FLEET_MODELS = [
+  { model: 'RZR 500',      capacityLabel: '2 adultos, 1 niño', maxPassengers: 3, units: 1, prices: { 'Ruta Nanacatli': 1600, 'Ruta Miradores': 2600, 'Ruta Nacimiento': 3800, 'Ruta Tranidad': 3800 } },
+  { model: 'RZR 900',      capacityLabel: '4 adultos',         maxPassengers: 4, units: 1, prices: { 'Ruta Nanacatli': 1900, 'Ruta Miradores': 2800, 'Ruta Nacimiento': 4500, 'Ruta Tranidad': 4500 } },
+  { model: 'CAN-AM 800',   capacityLabel: '2 adultos',         maxPassengers: 2, units: 1, prices: { 'Ruta Nanacatli': 1600, 'Ruta Miradores': 2600, 'Ruta Nacimiento': 3800, 'Ruta Tranidad': 3800 } },
+  { model: 'DEFENDER 6',   capacityLabel: '6 adultos',         maxPassengers: 6, units: 5, prices: { 'Ruta Nanacatli': 2200, 'Ruta Miradores': 3000, 'Ruta Nacimiento': 5000, 'Ruta Tranidad': 5000 } },
+  { model: 'POLARIS PRO S',capacityLabel: '4 adultos',         maxPassengers: 4, units: 2, prices: { 'Ruta Nanacatli': 3500, 'Ruta Miradores': 4500, 'Ruta Nacimiento': 7000, 'Ruta Tranidad': 7000 } },
+  { model: 'MAVERIC X3',   capacityLabel: '4 adultos',         maxPassengers: 4, units: 2, prices: { 'Ruta Nanacatli': 2500, 'Ruta Miradores': 3500, 'Ruta Nacimiento': 5500, 'Ruta Tranidad': 5500 } },
+];
+
+const VEHICLES = FLEET_MODELS.flatMap((m, idx) =>
+  Array.from({ length: m.units }, (_, i) => ({
+    id:             `v${idx + 1}-${i + 1}`,
+    name:           `${m.model}-${String(i + 1).padStart(2,'0')}`,
+    type:           m.model,
+    capacityLabel:  m.capacityLabel,
+    maxPassengers:  m.maxPassengers,
+    prices:         m.prices,
+  }))
+);
+
+const TOURS = TOUR_DEFINITIONS;
+const HOURS = Array.from({ length: 16 }, (_, i) => `${String(i + 7).padStart(2,'0')}:00`);
+
+let reservations = JSON.parse(localStorage.getItem('trailops_reservations') || '[]');
+
+if (!reservations.length) {
+  const today = new Date();
+  const fmt = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const d0 = fmt(today);
+  const d1 = fmt(new Date(today.getTime() + 86400000));
+  reservations = [
+    { id:'r1', date:d0, client:'Carlos Hernández', vehicle:'RZR 900-01',    tour:'Ruta Miradores',  hour:'09:00', persons:4, price:2800, status:'Confirmada', phone:'5551234567', notes:'' },
+    { id:'r2', date:d0, client:'Ana López',        vehicle:'RZR 500-01',    tour:'Ruta Nanacatli',  hour:'08:00', persons:3, price:1600, status:'Confirmada', phone:'5557654321', notes:'' },
+    { id:'r3', date:d0, client:'Pedro Martínez',   vehicle:'CAN-AM 800-01', tour:'Ruta Nacimiento', hour:'11:00', persons:2, price:3800, status:'Pendiente',  phone:'',           notes:'' },
+    { id:'r4', date:d1, client:'Sofía Ruiz',       vehicle:'DEFENDER 6-01', tour:'Ruta Miradores',  hour:'14:00', persons:6, price:3000, status:'Confirmada', phone:'',           notes:'' },
+    { id:'r5', date:d1, client:'Miguel Torres',    vehicle:'MAVERIC X3-01', tour:'Ruta Nanacatli',  hour:'10:00', persons:4, price:2500, status:'Confirmada', phone:'',           notes:'' },
+  ];
+  saveData();
 }
 
-async function cancelar(folio) {
-  if (!confirm(`¿Cancelar la reserva ${folio}? Esta acción quedará en la bitácora.`)) return;
-  const r = await fetch(`/api/cancelar/${folio}`, { method: 'POST' });
-  const d = await r.json();
-  if (r.ok) { toast('Reserva cancelada', 'ok'); await loadReservas(); }
-  else       { toast(d.error, 'err'); }
+function saveData() { localStorage.setItem('trailops_reservations', JSON.stringify(reservations)); }
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+const genId      = () => 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2,5);
+const getVehicle = name => VEHICLES.find(v => v.name === name);
+const getTour    = name => TOURS.find(t => t.name === name);
+const dateKey    = d => { if (!(d instanceof Date)) return d; return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
+
+function getRoutePrice(vehicleName, tourName) { return Number(getVehicle(vehicleName)?.prices?.[tourName] || 0); }
+function getMinRoutePrice(tourName) { const p = VEHICLES.map(v => Number(v.prices?.[tourName]||0)).filter(Boolean); return p.length ? Math.min(...p) : 0; }
+
+function migrateDeprecatedVehicles() {
+  let changed = false;
+  reservations = reservations.map(r => {
+    if (r.vehicle === 'DEFENDER 6+2-01') { changed = true; return { ...r, vehicle: 'DEFENDER 6-01', price: getRoutePrice('DEFENDER 6-01', r.tour) || Number(r.price) || 0 }; }
+    return r;
+  });
+  if (changed) saveData();
+}
+migrateDeprecatedVehicles();
+
+function fmtDateLong(dateStr) {
+  const [y,m,d] = dateStr.split('-').map(Number);
+  const dt = new Date(y,m-1,d);
+  const days   = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  return `${days[dt.getDay()]} ${d} de ${months[m-1]} de ${y}`;
+}
+function fmtDateShort(dateStr) {
+  const [y,m,d] = dateStr.split('-').map(Number);
+  const dt   = new Date(y,m-1,d);
+  const days = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  return `${days[dt.getDay()]} ${String(d).padStart(2,'0')}/${String(m).padStart(2,'0')}`;
+}
+function hourEnd(startHour, durationH) { const [h,m] = startHour.split(':').map(Number); return `${String(h+durationH).padStart(2,'0')}:${String(m).padStart(2,'0')}`; }
+function timeToMin(t) { const [h,m] = t.split(':').map(Number); return h*60+m; }
+
+function hasConflict(vehicleName, date, startHour, durationH, excludeId = null) {
+  const startMin = timeToMin(startHour), endMin = startMin + durationH * 60;
+  return reservations.some(r => {
+    if (r.id === excludeId || r.vehicle !== vehicleName || r.date !== date || r.status === 'Cancelada') return false;
+    const tour = getTour(r.tour); if (!tour) return false;
+    const rStart = timeToMin(r.hour), rEnd = rStart + tour.duration * 60;
+    return startMin < rEnd && endMin > rStart;
+  });
 }
 
-function downloadPDF(folio) {
-  window.open(`/api/pdf/${folio}`, '_blank');
+function autoAssign(date, startHour, duration, excludeId, minCapacity = 1) {
+  return VEHICLES.find(v => Number(v.maxPassengers||0) >= Number(minCapacity||1) && !hasConflict(v.name, date, startHour, duration, excludeId)) || null;
 }
 
-// ── Bitácora ──────────────────────────────────────────────
-async function loadLogs() {
-  const r = await fetch('/api/logs');
-  if (!r.ok) return;
-  const logs = await r.json();
-  const tb = document.getElementById('tbLogs');
-  if (logs.length === 0) {
-    tb.innerHTML = `<tr><td colspan="5" class="empty">Sin registros aún.</td></tr>`;
+function showToast(msg, duration = 2000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+function showAlert(msg) { const a = document.getElementById('form-alert'); a.textContent = msg; a.classList.add('show'); }
+function clearAlert()   { document.getElementById('form-alert').classList.remove('show'); }
+
+// ─── PDF ───────────────────────────────────────────────────────────────────────
+function downloadPDF(id) {
+  const r = reservations.find(x => x.id === id);
+  if (!r) return;
+  const tour  = getTour(r.tour);
+  const end   = tour ? hourEnd(r.hour, tour.duration) : '?';
+  const folio = 'RES-' + r.id.slice(-4).toUpperCase();
+
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>Confirmación ${folio}</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  @media print { body{-webkit-print-color-adjust:exact;print-color-adjust:exact;} @page{margin:0} }
+  body{font-family:'Inter',sans-serif;margin:0;padding:32px;color:#2D1B0E;max-width:680px;margin:0 auto;}
+  .hdr{background:#1B3A2A;color:white;padding:24px 32px;margin:-32px -32px 28px;}
+  .hdr-brand{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:#E8B87A;}
+  .hdr-sub{font-size:12px;color:rgba(255,255,255,.55);margin-top:4px;}
+  .folio{display:inline-block;background:#C4703A;color:white;padding:4px 18px;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:16px;}
+  h1{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;margin-bottom:20px;color:#1B3A2A;}
+  .sec{margin-bottom:18px;}
+  .sec-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#8a7e72;border-bottom:1px solid #E0D9CE;padding-bottom:4px;margin-bottom:8px;}
+  .row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F0EBE0;font-size:13px;}
+  .row:last-child{border-bottom:none;}
+  .lbl{color:#8a7e72;}  .val{font-weight:600;}
+  .total{background:#F4FAF5;border:1px solid #9BD0AE;border-radius:8px;padding:12px 16px;margin:16px 0;font-size:18px;font-weight:700;color:#1B3A2A;}
+  .recs{background:#FEF3E6;border:1px solid #f0c070;border-radius:8px;padding:14px 16px;font-size:12px;color:#92400e;margin-top:8px;line-height:1.7;}
+  .footer{margin-top:24px;text-align:center;font-size:11px;color:#8a7e72;}
+</style></head><body>
+<div class="hdr"><div class="hdr-brand">🌿 Sorprendente Tour</div><div class="hdr-sub">Aventuras Off-Road · Xilitla, San Luis Potosí</div></div>
+<div class="folio">${folio}</div>
+<h1>Confirmación de Reserva</h1>
+<div class="sec">
+  <div class="sec-title">Datos del cliente</div>
+  <div class="row"><span class="lbl">Cliente</span><span class="val">${r.client}</span></div>
+  ${r.phone ? `<div class="row"><span class="lbl">Teléfono</span><span class="val">${r.phone}</span></div>` : ''}
+  <div class="row"><span class="lbl">Estado</span><span class="val">${r.status}</span></div>
+</div>
+<div class="sec">
+  <div class="sec-title">Detalles del tour</div>
+  <div class="row"><span class="lbl">Recorrido</span><span class="val">${r.tour}</span></div>
+  <div class="row"><span class="lbl">Fecha</span><span class="val">${fmtDateLong(r.date)}</span></div>
+  <div class="row"><span class="lbl">Horario</span><span class="val">${r.hour} – ${end}</span></div>
+  <div class="row"><span class="lbl">Vehículo</span><span class="val">${r.vehicle}</span></div>
+  <div class="row"><span class="lbl">Personas</span><span class="val">${r.persons}</span></div>
+  <div class="row"><span class="lbl">Duración</span><span class="val">${tour?.duration || '?'} horas</span></div>
+</div>
+<div class="total">💰 Total: $${Number(r.price).toLocaleString()} MXN</div>
+<div class="recs"><strong>Recomendaciones:</strong><br>
+• Llegar 15 minutos antes de la hora de salida<br>
+• Ropa que puedas ensuciar y zapatos cerrados (sin sandalias)<br>
+• Llevar agua y protector solar · Cargar la cámara<br>
+• El punto de encuentro exacto se confirma el día anterior</div>
+<div class="footer">Sorprendente Tour · Xilitla, San Luis Potosí · sorprendentetour.com</div>
+</body></html>`;
+
+  const win = window.open('', '_blank', 'width=780,height=960');
+  win.document.write(html);
+  win.document.close();
+  win.onload = () => { win.focus(); win.print(); };
+  addAudit('PDF generado', `${folio} · ${r.client} · ${r.tour}`);
+}
+
+// ─── VIEW SWITCHING ────────────────────────────────────────────────────────────
+function switchView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  const idx = ['dashboard','reservas','calendario','bitacora'].indexOf(name);
+  if (idx !== -1) document.querySelectorAll('.nav-tab')[idx].classList.add('active');
+  if (name === 'dashboard')  renderDashboard();
+  if (name === 'reservas')   renderReservations();
+  if (name === 'calendario') renderCalendar();
+  if (name === 'bitacora')   renderAuditLog();
+}
+
+// ─── DASHBOARD ─────────────────────────────────────────────────────────────────
+function renderDashboard() {
+  const active    = reservations.filter(r => r.status !== 'Cancelada');
+  const confirmed = reservations.filter(r => r.status === 'Confirmada');
+  const totalIngresos = confirmed.reduce((s,r) => s + (Number(r.price)||0), 0);
+  const ticket = confirmed.length ? Math.round(totalIngresos / confirmed.length) : 0;
+  const vehActivos = new Set(active.map(r => r.vehicle)).size;
+
+  document.getElementById('dash-kpis').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total reservas</div><div class="stat-value">${active.length}</div><div class="stat-sub">activas</div></div>
+    <div class="stat-card"><div class="stat-label">Ingresos</div><div class="stat-value">$${totalIngresos.toLocaleString()}</div><div class="stat-sub">confirmadas</div></div>
+    <div class="stat-card"><div class="stat-label">Ticket promedio</div><div class="stat-value">$${ticket.toLocaleString()}</div><div class="stat-sub">por reserva</div></div>
+    <div class="stat-card"><div class="stat-label">Vehículos activos</div><div class="stat-value">${vehActivos}</div><div class="stat-sub">de ${VEHICLES.length}</div></div>
+  `;
+
+  const sortedRecent = [...active].sort((a,b) => (`${a.date} ${a.hour}` < `${b.date} ${b.hour}` ? 1 : -1)).slice(0,8);
+  document.getElementById('dash-recent-tbody').innerHTML = sortedRecent.length
+    ? sortedRecent.map(r => `<tr><td>${fmtDateShort(r.date)} ${r.hour}</td><td>${r.client}</td><td>${r.tour}</td><td>${r.vehicle}</td><td>$${Number(r.price||0).toLocaleString()}</td></tr>`).join('')
+    : '<tr><td colspan="5" class="td-muted">Sin reservas registradas</td></tr>';
+
+  const byTour = {};
+  active.forEach(r => { if (!byTour[r.tour]) byTour[r.tour] = { count:0, revenue:0 }; byTour[r.tour].count++; byTour[r.tour].revenue += Number(r.price||0); });
+  const routeRows = Object.entries(byTour).sort((a,b) => b[1].count - a[1].count).slice(0,8);
+  document.getElementById('dash-routes-tbody').innerHTML = routeRows.length
+    ? routeRows.map(([tour,meta]) => `<tr><td>${tour}</td><td>${meta.count}</td><td>$${Number(meta.revenue).toLocaleString()}</td></tr>`).join('')
+    : '<tr><td colspan="3" class="td-muted">Sin datos</td></tr>';
+
+  const activeDates    = [...new Set(active.map(r => r.date))];
+  const totalHoursBase = Math.max(activeDates.length,1) * HOURS.length;
+  const occupancy = VEHICLES.map(v => {
+    const reservedH = active.filter(r => r.vehicle===v.name).reduce((s,r) => s+(getTour(r.tour)?.duration||0),0);
+    const pct   = Math.min(100, Math.round((reservedH/totalHoursBase)*100));
+    const color = pct>=70 ? 'occ-green' : pct>=40 ? 'occ-amber' : 'occ-red';
+    return { name:v.name, pct, color };
+  }).sort((a,b) => b.pct-a.pct);
+
+  document.getElementById('dash-occupancy').innerHTML = occupancy.map(o => `
+    <div class="occ-row">
+      <div class="occ-name">${o.name}</div>
+      <div class="occ-track"><div class="occ-fill ${o.color}" style="width:${o.pct}%"></div></div>
+      <div class="occ-pct">${o.pct}%</div>
+    </div>`).join('');
+
+  document.getElementById('dash-subtitle').textContent = `Actualizado automáticamente · ${active.length} reservas vigentes`;
+}
+
+// ─── STATS STRIP ───────────────────────────────────────────────────────────────
+function renderStats() {
+  const confirmed  = reservations.filter(r => r.status === 'Confirmada');
+  const total_rev  = confirmed.reduce((s,r) => s+(Number(r.price)||0), 0);
+  const avg        = confirmed.length ? Math.round(total_rev/confirmed.length) : 0;
+  const today      = dateKey(new Date());
+  const today_count= confirmed.filter(r => r.date===today).length;
+  document.getElementById('stats-strip').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Reservas totales</div><div class="stat-value">${reservations.filter(r=>r.status!=='Cancelada').length}</div><div class="stat-sub">activas</div></div>
+    <div class="stat-card"><div class="stat-label">Ingresos confirmados</div><div class="stat-value">$${total_rev.toLocaleString()}</div><div class="stat-sub">MXN</div></div>
+    <div class="stat-card"><div class="stat-label">Ticket promedio</div><div class="stat-value">$${avg.toLocaleString()}</div><div class="stat-sub">por reserva</div></div>
+    <div class="stat-card"><div class="stat-label">Reservas hoy</div><div class="stat-value">${today_count}</div><div class="stat-sub">${today}</div></div>
+  `;
+}
+
+// ─── RESERVATIONS ──────────────────────────────────────────────────────────────
+function renderReservations() {
+  renderStats();
+  const search        = document.getElementById('search-input').value.toLowerCase();
+  const filterStatus  = document.getElementById('filter-status').value;
+  const filterDate    = document.getElementById('filter-date').value;
+
+  const vf = document.getElementById('filter-vehicle');
+  const prev = vf.value;
+  vf.innerHTML = '<option value="">Todos los vehículos</option>' +
+    VEHICLES.map(v => `<option value="${v.name}" ${prev===v.name?'selected':''}>${v.name}</option>`).join('');
+  const filterVehicle = vf.value;
+
+  let filtered = [...reservations].sort((a,b) => a.date!==b.date ? (a.date<b.date?-1:1) : (a.hour<b.hour?-1:1));
+  if (search)        filtered = filtered.filter(r => r.client.toLowerCase().includes(search)||r.vehicle.toLowerCase().includes(search)||r.tour.toLowerCase().includes(search));
+  if (filterStatus)  filtered = filtered.filter(r => r.status===filterStatus);
+  if (filterVehicle) filtered = filtered.filter(r => r.vehicle===filterVehicle);
+  if (filterDate)    filtered = filtered.filter(r => r.date===filterDate);
+
+  document.getElementById('res-count-label').textContent = `${filtered.length} reserva${filtered.length!==1?'s':''} encontradas`;
+
+  const tbody = document.getElementById('res-tbody');
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="10"><div class="empty-state"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><p>No se encontraron reservas</p></div></td></tr>`;
     return;
   }
-  tb.innerHTML = logs.map(l => `<tr>
-    <td>${new Date(l.fecha).toLocaleString('es-MX')}</td>
-    <td class="log-usuario">${l.usuario}</td>
-    <td class="log-accion">${l.accion}</td>
-    <td>${l.folio || '—'}</td>
-    <td>${l.detalles}</td>
-  </tr>`).join('');
+  const statusBadge = s => { const map={Confirmada:'green',Pendiente:'amber',Cancelada:'red'}; return `<span class="badge badge-${map[s]||'amber'}">${s}</span>`; };
+
+  tbody.innerHTML = filtered.map(r => {
+    const tour  = getTour(r.tour);
+    const end   = tour ? hourEnd(r.hour, tour.duration) : '?';
+    const folio = 'RES-' + r.id.slice(-4).toUpperCase();
+    return `<tr>
+      <td class="td-mono">${folio}</td>
+      <td>${fmtDateShort(r.date)}</td>
+      <td class="td-bold">${r.client}</td>
+      <td><span style="font-family:'DM Mono',monospace;font-size:12px;background:var(--surface-3);padding:2px 7px;border-radius:5px">${r.vehicle}</span></td>
+      <td>${r.tour}</td>
+      <td class="td-mono">${r.hour}–${end}</td>
+      <td class="td-muted">${r.persons}p</td>
+      <td style="font-weight:600;color:var(--green)">$${Number(r.price).toLocaleString()}</td>
+      <td>${statusBadge(r.status)}</td>
+      <td>
+        <div style="display:flex;gap:4px">
+          <button class="btn btn-pdf-row btn-sm btn-icon" onclick="downloadPDF('${r.id}')" title="Descargar PDF">📄</button>
+          <button class="btn btn-outline btn-sm btn-icon"  onclick="openEditModal('${r.id}')" title="Editar">✏️</button>
+          <button class="btn btn-danger btn-sm btn-icon"   onclick="confirmDelete('${r.id}')" title="Eliminar">✕</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
 }
 
-// ── Tabs ──────────────────────────────────────────────────
-function setTab(tab, btn) {
-  currentTab = tab;
-  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+// ─── CALENDAR ──────────────────────────────────────────────────────────────────
+let calDate = dateKey(new Date());
 
-  const showReservas = tab !== 'logs';
-  document.getElementById('secReservas').style.display = showReservas ? '' : 'none';
-  document.getElementById('secLogs').style.display     = showReservas ? 'none' : '';
+function renderCalendar() {
+  document.getElementById('cal-date-main').textContent  = fmtDateLong(calDate);
+  document.getElementById('cal-date-sub').textContent   = `${reservations.filter(r=>r.date===calDate&&r.status!=='Cancelada').length} reservas este día`;
+  document.getElementById('cal-date-input').value       = calDate;
 
-  if (tab === 'logs') loadLogs(); else renderReservas();
+  const grid = document.getElementById('cal-grid');
+  grid.style.gridTemplateColumns = `64px repeat(${VEHICLES.length}, 1fr)`;
+  grid.innerHTML = '';
+
+  const timeHdr = document.createElement('div');
+  timeHdr.className = 'cal-col-header';
+  timeHdr.style.background = 'var(--green)';
+  grid.appendChild(timeHdr);
+
+  VEHICLES.forEach(v => {
+    const hdr = document.createElement('div');
+    hdr.className = 'cal-col-header';
+    hdr.innerHTML = `<div>${v.name}</div><div class="veh-type">${v.type}</div>`;
+    grid.appendChild(hdr);
+  });
+
+  const occupied = {};
+  reservations.filter(r => r.date===calDate && r.status!=='Cancelada').forEach(r => {
+    const tour = getTour(r.tour); if (!tour) return;
+    const startIdx = HOURS.indexOf(r.hour); if (startIdx===-1) return;
+    for (let i=0; i<tour.duration; i++) {
+      const hIdx = startIdx+i;
+      if (hIdx < HOURS.length) occupied[`${r.vehicle}_${HOURS[hIdx]}`] = { res:r, isStart:i===0, duration:tour.duration };
+    }
+  });
+
+  HOURS.forEach(hour => {
+    const tl = document.createElement('div');
+    tl.className = 'cal-time-label';
+    tl.textContent = hour;
+    grid.appendChild(tl);
+
+    VEHICLES.forEach(v => {
+      const occ  = occupied[`${v.name}_${hour}`];
+      const cell = document.createElement('div');
+      cell.className = 'cal-cell';
+      if (occ) {
+        cell.classList.add('cal-cell-reserved');
+        if (occ.isStart) {
+          const block = document.createElement('div');
+          block.className = 'cal-block';
+          block.innerHTML = `<div class="cal-block-name">${occ.res.client}</div><div class="cal-block-tour">${occ.res.tour}</div>`;
+          block.onclick = () => openEditModal(occ.res.id);
+          cell.appendChild(block);
+        } else {
+          cell.style.background = '#e8f8ef';
+          cell.style.borderTop  = '1px dashed var(--green-border)';
+        }
+      } else {
+        const hint = document.createElement('span');
+        hint.className = 'avail-text'; hint.textContent = '+ reservar';
+        cell.appendChild(hint);
+        cell.onclick = () => openNewModal(v.name, calDate, hour);
+      }
+      grid.appendChild(cell);
+    });
+  });
 }
 
-// ── Toast ─────────────────────────────────────────────────
-function toast(msg, type = 'ok') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = `show ${type}`;
-  setTimeout(() => t.className = '', 3000);
+function changeDay(delta) { const [y,m,d]=calDate.split('-').map(Number); calDate=dateKey(new Date(y,m-1,d+delta)); renderCalendar(); }
+function goToday()        { calDate=dateKey(new Date()); renderCalendar(); }
+function setCalDate(val)  { if (val) { calDate=val; renderCalendar(); } }
+
+// ─── MODAL ─────────────────────────────────────────────────────────────────────
+let editingId = null;
+
+function populateSelects() {
+  document.getElementById('f-tour').innerHTML = '<option value="">Selecciona recorrido...</option>' +
+    TOURS.map(t => `<option value="${t.name}">${t.name} — ${t.duration}h · desde $${getMinRoutePrice(t.name).toLocaleString()}</option>`).join('');
+  document.getElementById('f-vehicle').innerHTML = '<option value="">Auto-asignar</option>' +
+    VEHICLES.map(v => `<option value="${v.name}">${v.name} · ${v.type}</option>`).join('');
+  document.getElementById('f-hour').innerHTML = HOURS.map(h => `<option value="${h}">${h}</option>`).join('');
 }
 
-// ── Init ──────────────────────────────────────────────────
-checkAuth();
+function openNewModal(vehiclePreset=null, datePreset=null, hourPreset=null) {
+  editingId = null; populateSelects();
+  document.getElementById('f-date').value     = datePreset || calDate || dateKey(new Date());
+  document.getElementById('f-hour').value     = hourPreset || '09:00';
+  if (vehiclePreset) document.getElementById('f-vehicle').value = vehiclePreset;
+  document.getElementById('f-client').value   = '';
+  document.getElementById('f-phone').value    = '';
+  document.getElementById('f-price').value    = '';
+  document.getElementById('f-persons').value  = '2';
+  document.getElementById('f-notes').value    = '';
+  document.getElementById('f-tour').value     = '';
+  document.getElementById('tour-info').classList.remove('show');
+  document.getElementById('modal-title').textContent   = 'Nueva reserva';
+  document.getElementById('btn-save').textContent      = 'Confirmar reserva';
+  document.getElementById('btn-delete').style.display  = 'none';
+  clearAlert();
+  document.getElementById('modal-backdrop').classList.add('open');
+}
+
+function openEditModal(id) {
+  const r = reservations.find(x => x.id===id); if (!r) return;
+  editingId = id; populateSelects();
+  document.getElementById('f-date').value     = r.date;
+  document.getElementById('f-hour').value     = r.hour;
+  document.getElementById('f-vehicle').value  = r.vehicle;
+  document.getElementById('f-tour').value     = r.tour;
+  document.getElementById('f-client').value   = r.client;
+  document.getElementById('f-phone').value    = r.phone || '';
+  document.getElementById('f-price').value    = r.price;
+  document.getElementById('f-persons').value  = r.persons;
+  document.getElementById('f-notes').value    = r.notes || '';
+  onTourChange();
+  document.getElementById('modal-title').textContent   = 'Editar reserva';
+  document.getElementById('btn-save').textContent      = 'Guardar cambios';
+  document.getElementById('btn-delete').style.display  = 'inline-flex';
+  clearAlert();
+  document.getElementById('modal-backdrop').classList.add('open');
+}
+
+function closeModal(e)  { if (e.target===document.getElementById('modal-backdrop')) closeModalDirect(); }
+function closeModalDirect() { document.getElementById('modal-backdrop').classList.remove('open'); }
+
+function onTourChange() {
+  const name = document.getElementById('f-tour').value;
+  const vehicleName = document.getElementById('f-vehicle').value;
+  const tour = getTour(name);
+  const box  = document.getElementById('tour-info');
+  if (tour) {
+    const selectedVehicle = getVehicle(vehicleName);
+    const capText    = selectedVehicle ? selectedVehicle.capacityLabel : 'según unidad';
+    const routePrice = selectedVehicle ? getRoutePrice(vehicleName,name) : getMinRoutePrice(name);
+    box.textContent = `⏱ ${tour.duration}h · 👥 ${capText} · 💰 $${Number(routePrice).toLocaleString()} MXN`;
+    box.classList.add('show');
+    document.getElementById('f-price').value = routePrice || '';
+  } else { box.classList.remove('show'); document.getElementById('f-price').value = ''; }
+}
+
+function saveReservation() {
+  clearAlert();
+  const tourName = document.getElementById('f-tour').value;
+  const date     = document.getElementById('f-date').value;
+  const hour     = document.getElementById('f-hour').value;
+  let vehicle    = document.getElementById('f-vehicle').value;
+  const client   = document.getElementById('f-client').value.trim();
+  const persons  = parseInt(document.getElementById('f-persons').value) || 1;
+  const phone    = document.getElementById('f-phone').value.trim();
+  const notes    = document.getElementById('f-notes').value.trim();
+
+  if (!tourName) return showAlert('Selecciona un tipo de recorrido.');
+  if (!date)     return showAlert('Selecciona una fecha.');
+  if (!client)   return showAlert('Ingresa el nombre del cliente.');
+
+  const tour = getTour(tourName);
+
+  if (!vehicle) {
+    const assigned = autoAssign(date, hour, tour.duration, editingId, persons);
+    if (!assigned) return showAlert('No hay vehículos disponibles con esa capacidad en ese horario.');
+    vehicle = assigned.name;
+  } else {
+    const sv = getVehicle(vehicle);
+    if (!sv) return showAlert('La unidad seleccionada ya no está disponible.');
+    if (persons > Number(sv?.maxPassengers||0)) return showAlert(`La unidad ${vehicle} admite máximo ${sv?.maxPassengers||0} personas.`);
+    if (hasConflict(vehicle, date, hour, tour.duration, editingId)) return showAlert(`${vehicle} ya tiene una reserva en ese horario.`);
+  }
+
+  const price = getRoutePrice(vehicle, tourName);
+  if (!price) return showAlert('No existe tarifa para esa combinación.');
+  document.getElementById('f-price').value = price;
+
+  const folio = editingId ? 'RES-' + editingId.slice(-4).toUpperCase() : null;
+
+  if (editingId) {
+    const idx = reservations.findIndex(r => r.id===editingId);
+    const old = reservations[idx];
+    reservations[idx] = { ...old, date, hour, vehicle, client, persons, price, phone, notes, tour:tourName };
+    addAudit('Reserva editada', `${folio} · ${client} · ${tourName} · ${date} ${hour}`);
+    showToast(`Reserva de ${client} actualizada`);
+  } else {
+    const newId = genId();
+    reservations.push({ id:newId, date, client, vehicle, tour:tourName, hour, persons, price, phone, notes, status:'Confirmada' });
+    const newFolio = 'RES-' + newId.slice(-4).toUpperCase();
+    addAudit('Reserva creada', `${newFolio} · ${client} · ${tourName} · ${vehicle} · ${date} ${hour}`);
+    showToast(`Reserva confirmada · ${vehicle} · ${hour}`);
+  }
+
+  saveData(); closeModalDirect();
+  renderReservations(); renderCalendar(); renderDashboard();
+}
+
+function confirmDelete(id) {
+  const r = reservations.find(x => x.id===id); if (!r) return;
+  if (confirm(`¿Eliminar la reserva de ${r.client}?`)) {
+    const folio = 'RES-' + r.id.slice(-4).toUpperCase();
+    addAudit('Reserva eliminada', `${folio} · ${r.client} · ${r.tour} · ${r.date}`);
+    reservations = reservations.filter(x => x.id!==id);
+    saveData(); showToast('Reserva eliminada');
+    renderReservations(); renderCalendar(); renderDashboard();
+  }
+}
+
+function deleteCurrentRes() {
+  if (!editingId) return;
+  const r = reservations.find(x => x.id===editingId); if (!r) return;
+  if (confirm(`¿Eliminar la reserva de ${r.client}?`)) {
+    const folio = 'RES-' + r.id.slice(-4).toUpperCase();
+    addAudit('Reserva eliminada', `${folio} · ${r.client} · ${r.tour} · ${r.date}`);
+    reservations = reservations.filter(x => x.id!==editingId);
+    saveData(); closeModalDirect(); showToast('Reserva eliminada');
+    renderReservations(); renderCalendar(); renderDashboard();
+  }
+}
+
+// ─── EXCEL EXPORT ─────────────────────────────────────────────────────────────
+function exportExcel() {
+  const wb = XLSX.utils.book_new();
+  const headers = ['Folio','Fecha','Cliente','Vehículo','Recorrido','Hora inicio','Hora fin','Personas','Precio MXN','Estado','Teléfono','Notas'];
+  const rows = reservations.map(r => {
+    const tour = getTour(r.tour);
+    return ['RES-'+r.id.slice(-4).toUpperCase(), r.date, r.client, r.vehicle, r.tour, r.hour, tour?hourEnd(r.hour,tour.duration):'', r.persons, r.price, r.status, r.phone||'', r.notes||''];
+  });
+  const ws1 = XLSX.utils.aoa_to_sheet([headers,...rows]);
+  ws1['!cols'] = [9,12,20,12,20,12,12,10,13,14,14,24].map(w=>({wch:w}));
+  XLSX.utils.book_append_sheet(wb, ws1, 'Reservas');
+
+  const calHeaders = ['Hora',...VEHICLES.map(v=>v.name)];
+  const calRows = HOURS.map(hour => {
+    const row = [hour];
+    VEHICLES.forEach(v => {
+      const r = reservations.find(res => res.date===calDate && res.vehicle===v.name && res.status!=='Cancelada' && (() => { const t=getTour(res.tour); if (!t) return false; const s=timeToMin(res.hour),e=s+t.duration*60,c=timeToMin(hour); return c>=s&&c<e; })());
+      row.push(r ? `${r.client} · ${r.tour}` : 'Disponible');
+    });
+    return row;
+  });
+  const ws2 = XLSX.utils.aoa_to_sheet([calHeaders,...calRows]);
+  ws2['!cols'] = [10,26,26,26,26].map(w=>({wch:w}));
+  XLSX.utils.book_append_sheet(wb, ws2, 'Calendario '+calDate);
+  XLSX.writeFile(wb, `SorprendenteTour_${dateKey(new Date()).replace(/-/g,'')}.xlsx`);
+  addAudit('Excel exportado', `Exportación de ${reservations.length} reservas`);
+  showToast('Excel exportado correctamente');
+}
+
+// ─── INIT ──────────────────────────────────────────────────────────────────────
+checkSession();
 </script>
 </body>
 </html>

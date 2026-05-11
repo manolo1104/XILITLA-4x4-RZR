@@ -1,15 +1,4 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "admin.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/admin.js"
-    }
-  ]
+  "outputDirectory": "public",
+  "rewrites": [{ "source": "/(.*)", "dest": "/index.html" }]
 }

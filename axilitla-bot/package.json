@@ -1,0 +1,19 @@
+{
+  "name": "axilitla-bot",
+  "version": "1.0.0",
+  "description": "WhatsApp Bot para Axilitla 4x4 - Xilitla",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "admin": "node admin.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.37.0",
+    "dotenv": "^16.4.5",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "pdfkit": "^0.18.0",
+    "qrcode-terminal": "^0.12.0",
+    "whatsapp-web.js": "^1.23.0"
+  }
+}
