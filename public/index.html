@@ -522,89 +522,78 @@ tbody td { padding: 11px 14px; color: var(--ink); vertical-align: middle; }
 
 <script>
 // ─── AUTH ──────────────────────────────────────────────────────────────────────
-const CREDS = { Manolo: 'RZR2026' };
-const SESSION_KEY = 'st_session';
-const AUDIT_KEY   = 'st_audit';
-let currentUser   = null;
+let currentUser = null;
 
-function checkSession() {
-  const saved = sessionStorage.getItem(SESSION_KEY);
-  if (saved && CREDS[saved] !== undefined) {
-    currentUser = saved;
-    showApp();
-  }
+async function checkSession() {
+  try {
+    const r = await fetch('/api/me');
+    if (r.ok) { currentUser = (await r.json()).usuario; showApp(); }
+  } catch { /* sin servidor, modo estático */ }
 }
 
-function login() {
+async function login() {
   const u = document.getElementById('login-user').value.trim();
   const p = document.getElementById('login-pass').value;
-  if (CREDS[u] !== undefined && CREDS[u] === p) {
-    currentUser = u;
-    sessionStorage.setItem(SESSION_KEY, u);
+  const r = await fetch('/api/login', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ usuario: u, password: p })
+  });
+  const d = await r.json();
+  if (r.ok) {
+    currentUser = d.usuario;
     document.getElementById('login-error').textContent = '';
     showApp();
-    addAudit('Inicio de sesión', `Sesión iniciada por ${u}`);
   } else {
-    document.getElementById('login-error').textContent = 'Usuario o contraseña incorrectos';
+    document.getElementById('login-error').textContent = d.error;
     document.getElementById('login-pass').value = '';
   }
 }
 
-function logout() {
-  addAudit('Cierre de sesión', `Sesión cerrada por ${currentUser}`);
-  sessionStorage.removeItem(SESSION_KEY);
+async function logout() {
+  await fetch('/api/logout', { method: 'POST' });
   currentUser = null;
-  document.getElementById('app-root').style.display   = 'none';
+  document.getElementById('app-root').style.display      = 'none';
   document.getElementById('login-overlay').style.display = 'flex';
   document.getElementById('login-user').value = '';
   document.getElementById('login-pass').value = '';
 }
 
-function showApp() {
+async function showApp() {
   document.getElementById('login-overlay').style.display = 'none';
   document.getElementById('app-root').style.display      = 'block';
   document.getElementById('topbar-user').textContent     = currentUser;
-  renderReservations();
-  renderCalendar();
-  renderDashboard();
+  await loadReservations();
+  renderReservations(); renderCalendar(); renderDashboard();
 }
 
 // ─── AUDIT LOG ─────────────────────────────────────────────────────────────────
-function addAudit(action, details) {
-  const logs = JSON.parse(localStorage.getItem(AUDIT_KEY) || '[]');
-  logs.unshift({
-    id:      Date.now(),
-    ts:      new Date().toISOString(),
-    user:    currentUser || 'Sistema',
-    action,
-    details
-  });
-  localStorage.setItem(AUDIT_KEY, JSON.stringify(logs.slice(0, 500)));
+async function renderAuditLog() {
+  const tb = document.getElementById('audit-tbody');
+  tb.innerHTML = `<tr><td colspan="4" class="td-muted" style="text-align:center;padding:20px">Cargando...</td></tr>`;
+  try {
+    const r    = await fetch('/api/logs');
+    const logs = r.ok ? await r.json() : [];
+    if (!logs.length) {
+      tb.innerHTML = `<tr><td colspan="4"><div class="empty-state"><p>Sin registros aún.</p></div></td></tr>`;
+      return;
+    }
+    tb.innerHTML = logs.map(l => {
+      const dt    = new Date(l.fecha);
+      const fecha = dt.toLocaleDateString('es-MX', { day:'2-digit', month:'short', year:'numeric' });
+      const hora  = dt.toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit' });
+      return `<tr>
+        <td class="audit-ts">${fecha} ${hora}</td>
+        <td class="audit-user">${l.usuario}</td>
+        <td class="audit-action">${l.accion}</td>
+        <td class="td-muted">${l.details}</td>
+      </tr>`;
+    }).join('');
+  } catch { tb.innerHTML = `<tr><td colspan="4" class="td-muted" style="text-align:center">Error al cargar bitácora.</td></tr>`; }
 }
 
-function renderAuditLog() {
-  const logs = JSON.parse(localStorage.getItem(AUDIT_KEY) || '[]');
-  const tb   = document.getElementById('audit-tbody');
-  if (!logs.length) {
-    tb.innerHTML = `<tr><td colspan="4"><div class="empty-state"><p>Sin registros aún.</p></div></td></tr>`;
-    return;
-  }
-  tb.innerHTML = logs.map(l => {
-    const dt = new Date(l.ts);
-    const fecha = dt.toLocaleDateString('es-MX', { day:'2-digit', month:'short', year:'numeric' });
-    const hora  = dt.toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit' });
-    return `<tr>
-      <td class="audit-ts">${fecha} ${hora}</td>
-      <td class="audit-user">${l.user}</td>
-      <td class="audit-action">${l.action}</td>
-      <td class="td-muted">${l.details}</td>
-    </tr>`;
-  }).join('');
-}
-
-function clearAuditLog() {
+async function clearAuditLog() {
   if (!confirm('¿Borrar toda la bitácora? Esta acción no se puede deshacer.')) return;
-  localStorage.removeItem(AUDIT_KEY);
+  await fetch('/api/logs', { method: 'DELETE' });
   renderAuditLog();
   showToast('Bitácora limpiada');
 }
@@ -640,24 +629,15 @@ const VEHICLES = FLEET_MODELS.flatMap((m, idx) =>
 const TOURS = TOUR_DEFINITIONS;
 const HOURS = Array.from({ length: 16 }, (_, i) => `${String(i + 7).padStart(2,'0')}:00`);
 
-let reservations = JSON.parse(localStorage.getItem('trailops_reservations') || '[]');
+let reservations = [];
 
-if (!reservations.length) {
-  const today = new Date();
-  const fmt = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  const d0 = fmt(today);
-  const d1 = fmt(new Date(today.getTime() + 86400000));
-  reservations = [
-    { id:'r1', date:d0, client:'Carlos Hernández', vehicle:'RZR 900-01',    tour:'Ruta Miradores',  hour:'09:00', persons:4, price:2800, status:'Confirmada', phone:'5551234567', notes:'' },
-    { id:'r2', date:d0, client:'Ana López',        vehicle:'RZR 500-01',    tour:'Ruta Nanacatli',  hour:'08:00', persons:3, price:1600, status:'Confirmada', phone:'5557654321', notes:'' },
-    { id:'r3', date:d0, client:'Pedro Martínez',   vehicle:'CAN-AM 800-01', tour:'Ruta Nacimiento', hour:'11:00', persons:2, price:3800, status:'Pendiente',  phone:'',           notes:'' },
-    { id:'r4', date:d1, client:'Sofía Ruiz',       vehicle:'DEFENDER 6-01', tour:'Ruta Miradores',  hour:'14:00', persons:6, price:3000, status:'Confirmada', phone:'',           notes:'' },
-    { id:'r5', date:d1, client:'Miguel Torres',    vehicle:'MAVERIC X3-01', tour:'Ruta Nanacatli',  hour:'10:00', persons:4, price:2500, status:'Confirmada', phone:'',           notes:'' },
-  ];
-  saveData();
+async function loadReservations() {
+  try {
+    const r = await fetch('/api/reservas');
+    if (r.status === 401) { showLogin(); return; }
+    if (r.ok) reservations = await r.json();
+  } catch { reservations = []; }
 }
-
-function saveData() { localStorage.setItem('trailops_reservations', JSON.stringify(reservations)); }
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 const genId      = () => 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2,5);
@@ -668,15 +648,10 @@ const dateKey    = d => { if (!(d instanceof Date)) return d; return `${d.getFul
 function getRoutePrice(vehicleName, tourName) { return Number(getVehicle(vehicleName)?.prices?.[tourName] || 0); }
 function getMinRoutePrice(tourName) { const p = VEHICLES.map(v => Number(v.prices?.[tourName]||0)).filter(Boolean); return p.length ? Math.min(...p) : 0; }
 
-function migrateDeprecatedVehicles() {
-  let changed = false;
-  reservations = reservations.map(r => {
-    if (r.vehicle === 'DEFENDER 6+2-01') { changed = true; return { ...r, vehicle: 'DEFENDER 6-01', price: getRoutePrice('DEFENDER 6-01', r.tour) || Number(r.price) || 0 }; }
-    return r;
-  });
-  if (changed) saveData();
+function showLogin() {
+  document.getElementById('app-root').style.display      = 'none';
+  document.getElementById('login-overlay').style.display = 'flex';
 }
-migrateDeprecatedVehicles();
 
 function fmtDateLong(dateStr) {
   const [y,m,d] = dateStr.split('-').map(Number);
@@ -718,64 +693,7 @@ function clearAlert()   { document.getElementById('form-alert').classList.remove
 
 // ─── PDF ───────────────────────────────────────────────────────────────────────
 function downloadPDF(id) {
-  const r = reservations.find(x => x.id === id);
-  if (!r) return;
-  const tour  = getTour(r.tour);
-  const end   = tour ? hourEnd(r.hour, tour.duration) : '?';
-  const folio = 'RES-' + r.id.slice(-4).toUpperCase();
-
-  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
-<title>Confirmación ${folio}</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  @media print { body{-webkit-print-color-adjust:exact;print-color-adjust:exact;} @page{margin:0} }
-  body{font-family:'Inter',sans-serif;margin:0;padding:32px;color:#2D1B0E;max-width:680px;margin:0 auto;}
-  .hdr{background:#1B3A2A;color:white;padding:24px 32px;margin:-32px -32px 28px;}
-  .hdr-brand{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:#E8B87A;}
-  .hdr-sub{font-size:12px;color:rgba(255,255,255,.55);margin-top:4px;}
-  .folio{display:inline-block;background:#C4703A;color:white;padding:4px 18px;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:16px;}
-  h1{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;margin-bottom:20px;color:#1B3A2A;}
-  .sec{margin-bottom:18px;}
-  .sec-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#8a7e72;border-bottom:1px solid #E0D9CE;padding-bottom:4px;margin-bottom:8px;}
-  .row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F0EBE0;font-size:13px;}
-  .row:last-child{border-bottom:none;}
-  .lbl{color:#8a7e72;}  .val{font-weight:600;}
-  .total{background:#F4FAF5;border:1px solid #9BD0AE;border-radius:8px;padding:12px 16px;margin:16px 0;font-size:18px;font-weight:700;color:#1B3A2A;}
-  .recs{background:#FEF3E6;border:1px solid #f0c070;border-radius:8px;padding:14px 16px;font-size:12px;color:#92400e;margin-top:8px;line-height:1.7;}
-  .footer{margin-top:24px;text-align:center;font-size:11px;color:#8a7e72;}
-</style></head><body>
-<div class="hdr"><div class="hdr-brand">🌿 Sorprendente Tour</div><div class="hdr-sub">Aventuras Off-Road · Xilitla, San Luis Potosí</div></div>
-<div class="folio">${folio}</div>
-<h1>Confirmación de Reserva</h1>
-<div class="sec">
-  <div class="sec-title">Datos del cliente</div>
-  <div class="row"><span class="lbl">Cliente</span><span class="val">${r.client}</span></div>
-  ${r.phone ? `<div class="row"><span class="lbl">Teléfono</span><span class="val">${r.phone}</span></div>` : ''}
-  <div class="row"><span class="lbl">Estado</span><span class="val">${r.status}</span></div>
-</div>
-<div class="sec">
-  <div class="sec-title">Detalles del tour</div>
-  <div class="row"><span class="lbl">Recorrido</span><span class="val">${r.tour}</span></div>
-  <div class="row"><span class="lbl">Fecha</span><span class="val">${fmtDateLong(r.date)}</span></div>
-  <div class="row"><span class="lbl">Horario</span><span class="val">${r.hour} – ${end}</span></div>
-  <div class="row"><span class="lbl">Vehículo</span><span class="val">${r.vehicle}</span></div>
-  <div class="row"><span class="lbl">Personas</span><span class="val">${r.persons}</span></div>
-  <div class="row"><span class="lbl">Duración</span><span class="val">${tour?.duration || '?'} horas</span></div>
-</div>
-<div class="total">💰 Total: $${Number(r.price).toLocaleString()} MXN</div>
-<div class="recs"><strong>Recomendaciones:</strong><br>
-• Llegar 15 minutos antes de la hora de salida<br>
-• Ropa que puedas ensuciar y zapatos cerrados (sin sandalias)<br>
-• Llevar agua y protector solar · Cargar la cámara<br>
-• El punto de encuentro exacto se confirma el día anterior</div>
-<div class="footer">Sorprendente Tour · Xilitla, San Luis Potosí · sorprendentetour.com</div>
-</body></html>`;
-
-  const win = window.open('', '_blank', 'width=780,height=960');
-  win.document.write(html);
-  win.document.close();
-  win.onload = () => { win.focus(); win.print(); };
-  addAudit('PDF generado', `${folio} · ${r.client} · ${r.tour}`);
+  window.open(`/api/pdf/${id}`, '_blank');
 }
 
 // ─── VIEW SWITCHING ────────────────────────────────────────────────────────────
@@ -1044,7 +962,7 @@ function onTourChange() {
   } else { box.classList.remove('show'); document.getElementById('f-price').value = ''; }
 }
 
-function saveReservation() {
+async function saveReservation() {
   clearAlert();
   const tourName = document.getElementById('f-tour').value;
   const date     = document.getElementById('f-date').value;
@@ -1076,47 +994,50 @@ function saveReservation() {
   if (!price) return showAlert('No existe tarifa para esa combinación.');
   document.getElementById('f-price').value = price;
 
-  const folio = editingId ? 'RES-' + editingId.slice(-4).toUpperCase() : null;
+  document.getElementById('btn-save').disabled = true;
 
-  if (editingId) {
-    const idx = reservations.findIndex(r => r.id===editingId);
-    const old = reservations[idx];
-    reservations[idx] = { ...old, date, hour, vehicle, client, persons, price, phone, notes, tour:tourName };
-    addAudit('Reserva editada', `${folio} · ${client} · ${tourName} · ${date} ${hour}`);
-    showToast(`Reserva de ${client} actualizada`);
-  } else {
-    const newId = genId();
-    reservations.push({ id:newId, date, client, vehicle, tour:tourName, hour, persons, price, phone, notes, status:'Confirmada' });
-    const newFolio = 'RES-' + newId.slice(-4).toUpperCase();
-    addAudit('Reserva creada', `${newFolio} · ${client} · ${tourName} · ${vehicle} · ${date} ${hour}`);
-    showToast(`Reserva confirmada · ${vehicle} · ${hour}`);
+  try {
+    if (editingId) {
+      const r = await fetch(`/api/reservas/${editingId}`, {
+        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date, hour, vehicle, client, persons, price, phone, notes, tour: tourName })
+      });
+      if (!r.ok) { const d = await r.json(); return showAlert(d.error); }
+      showToast(`Reserva de ${client} actualizada`);
+    } else {
+      const r = await fetch('/api/reservas', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date, client, vehicle, tour: tourName, hour, persons, price, phone, notes, status: 'Confirmada' })
+      });
+      if (!r.ok) { const d = await r.json(); return showAlert(d.error); }
+      showToast(`Reserva confirmada · ${vehicle} · ${hour}`);
+    }
+    closeModalDirect();
+    await loadReservations();
+    renderReservations(); renderCalendar(); renderDashboard();
+  } finally {
+    document.getElementById('btn-save').disabled = false;
   }
+}
 
-  saveData(); closeModalDirect();
+async function confirmDelete(id) {
+  const r = reservations.find(x => x.id===id); if (!r) return;
+  if (!confirm(`¿Eliminar la reserva de ${r.client}?`)) return;
+  await fetch(`/api/reservas/${id}`, { method: 'DELETE' });
+  await loadReservations();
+  showToast('Reserva eliminada');
   renderReservations(); renderCalendar(); renderDashboard();
 }
 
-function confirmDelete(id) {
-  const r = reservations.find(x => x.id===id); if (!r) return;
-  if (confirm(`¿Eliminar la reserva de ${r.client}?`)) {
-    const folio = 'RES-' + r.id.slice(-4).toUpperCase();
-    addAudit('Reserva eliminada', `${folio} · ${r.client} · ${r.tour} · ${r.date}`);
-    reservations = reservations.filter(x => x.id!==id);
-    saveData(); showToast('Reserva eliminada');
-    renderReservations(); renderCalendar(); renderDashboard();
-  }
-}
-
-function deleteCurrentRes() {
+async function deleteCurrentRes() {
   if (!editingId) return;
   const r = reservations.find(x => x.id===editingId); if (!r) return;
-  if (confirm(`¿Eliminar la reserva de ${r.client}?`)) {
-    const folio = 'RES-' + r.id.slice(-4).toUpperCase();
-    addAudit('Reserva eliminada', `${folio} · ${r.client} · ${r.tour} · ${r.date}`);
-    reservations = reservations.filter(x => x.id!==editingId);
-    saveData(); closeModalDirect(); showToast('Reserva eliminada');
-    renderReservations(); renderCalendar(); renderDashboard();
-  }
+  if (!confirm(`¿Eliminar la reserva de ${r.client}?`)) return;
+  await fetch(`/api/reservas/${editingId}`, { method: 'DELETE' });
+  closeModalDirect();
+  await loadReservations();
+  showToast('Reserva eliminada');
+  renderReservations(); renderCalendar(); renderDashboard();
 }
 
 // ─── EXCEL EXPORT ─────────────────────────────────────────────────────────────
@@ -1144,7 +1065,6 @@ function exportExcel() {
   ws2['!cols'] = [10,26,26,26,26].map(w=>({wch:w}));
   XLSX.utils.book_append_sheet(wb, ws2, 'Calendario '+calDate);
   XLSX.writeFile(wb, `SorprendenteTour_${dateKey(new Date()).replace(/-/g,'')}.xlsx`);
-  addAudit('Excel exportado', `Exportación de ${reservations.length} reservas`);
   showToast('Excel exportado correctamente');
 }
 
